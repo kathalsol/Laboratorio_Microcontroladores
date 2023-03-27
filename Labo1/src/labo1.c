@@ -6,16 +6,46 @@ void led_display(int valor, int display);
 
 void main(void)
 {
+	TRISIO = 0b00000000; // Poner todos los pines como salidas
+	GPIO = 0x00; //Poner pines en bajo
 
+	unsigned int time = 5;
+	unsigned int numero1, numero2;
+	unsigned int contador = 0;
+
+	//Loop forever
+	while( 1 )
+	{
+		// Se obtienen los dos números aleatorios
+		numero1 = get_rand(0,9);
+		numero2 = get_rand(0,9);
+
+		if(GP3)
+			{
+				while(GP3)
+				{
+					led_display(numero1, 0);
+					delay(time);
+					led_display(numero2, 1);
+					delay(time);
+				}
+				
+			}
+
+		led_display(numero1, 0);
+		delay(time);
+		led_display(numero2, 1);
+		delay(time);
+	}
 
 }
 
 /* Función que genera los números aleatorios*/
 unsigned int get_rand(unsigned int min, unsigned int max)
 {
-    static unsigned int rand = 0x1A56; /*Valor inicial*/
+    static unsigned int rand = 999; /*Valor inicial*/
 
-    rand += ((rand * rand) /10) % 9899;
+    rand += ((rand * rand) /100) % 10000;
 
     return rand % (max+1-min)+min;
 
