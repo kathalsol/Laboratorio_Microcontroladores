@@ -1,43 +1,67 @@
 #include <pic14/pic12f683.h>
 
+// Configuración de registro CONFIG
+typedef unsigned int word;
+word __at 0x2007 __CONFIG = (_WDTE_OFF & _WDT_OFF & _MCLRE_OFF);
+
 void delay (unsigned tiempo);
 unsigned int get_rand(unsigned int min, unsigned int max);
 void led_display(int valor, int display);
 
 void main(void)
 {
-	TRISIO = 0b00000000; // Poner todos los pines como salidas
+	TRISIO = 0b00001000; // Poner todos los pines como salidas
 	GPIO = 0x00; //Poner pines en bajo
 
-	unsigned int time = 5;
+	unsigned int time = 10;
 	unsigned int numero1, numero2;
 	unsigned int contador = 0;
 
 	//Loop forever
 	while( 1 )
 	{
+
 		// Se obtienen los dos números aleatorios
 		numero1 = get_rand(0,9);
 		numero2 = get_rand(0,9);
-
-		if(GP3)
-			{
-				while(GP3)
-				{
-					led_display(numero1, 0);
-					delay(time);
-					led_display(numero2, 1);
-					delay(time);
-				}
-				
-			}
-
+		
+		/* Cuando el boton NO está presionado se generan 
+		los números aleatorios */
 		led_display(numero1, 0);
 		delay(time);
 		led_display(numero2, 1);
 		delay(time);
-	}
 
+		if(GP3)  // Cuando el botón está presionado (configuración pull down)
+		{
+			contador = contador + 1;
+			
+			while (GP3)
+			{
+				led_display(numero1, 0);
+				delay(time);
+				led_display(numero2, 1);
+				delay(time);
+			}
+
+			if (contador == 16)
+			{
+				led_display(9, 0);
+				delay(time);
+				led_display(9, 1);
+				delay(time);
+				led_display(9, 0);
+				delay(time);
+				led_display(9, 1);
+				delay(time);
+				led_display(9, 0);
+				delay(time);
+				led_display(9, 1);
+				delay(time);
+				contador = 0;
+			}
+		}
+	}
 }
 
 /* Función que genera los números aleatorios*/
@@ -74,7 +98,7 @@ void led_display(int valor, int display)
 
 		else if (valor == 8) GPIO = 0b00010000;
 
-		else GPIO = 0b00010001;
+		else if (valor == 9) GPIO = 0b00010001;
 	}
 
 	else if (display == 1)
@@ -97,7 +121,7 @@ void led_display(int valor, int display)
 
 		else if (valor == 8) GPIO = 0b00110000;
 
-		else GPIO = 0b00110001;
+		else if (valor == 9) GPIO = 0b00110001;
 	}
 }
 
