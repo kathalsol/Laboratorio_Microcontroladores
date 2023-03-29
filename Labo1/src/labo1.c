@@ -1,6 +1,7 @@
 #include <pic14/pic12f683.h>
 
-// Configuración de registro CONFIG
+/* Configuración de registro CONFIG, se desabilita el WDT y
+el inicio por defecto de GP3 como MCLRE(RESET)*/
 typedef unsigned int word;
 word __at 0x2007 __CONFIG = (_WDTE_OFF & _WDT_OFF & _MCLRE_OFF);
 
@@ -10,7 +11,7 @@ void led_display(int valor, int display);
 
 void main(void)
 {
-	TRISIO = 0b00001000; // Poner todos los pines como salidas
+	TRISIO = 0b00001000; // Poner todos los pines como salidas, GP3 como entrada por default
 	GPIO = 0x00; //Poner pines en bajo
 
 	unsigned int time = 10;
@@ -20,11 +21,10 @@ void main(void)
 	//Loop forever
 	while( 1 )
 	{
-
 		// Se obtienen los dos números aleatorios
 		numero1 = get_rand(0,9);
 		numero2 = get_rand(0,9);
-		
+
 		/* Cuando el boton NO está presionado se generan 
 		los números aleatorios */
 		led_display(numero1, 0);
@@ -32,33 +32,42 @@ void main(void)
 		led_display(numero2, 1);
 		delay(time);
 
+		contador = contador + 1;
+
+		/* Si se han generado 16 numeros diferentes entonces
+		se muestra el numero 9 en el display 0 y 9 en el 
+		display 1 generando un 99 intermitente */
+		if (contador == 16)
+		{
+			led_display(9, 0);
+			delay(time);
+			led_display(9, 1);
+			delay(time);
+			led_display(9, 0);
+			delay(time);
+			led_display(9, 1);
+			delay(time);
+			led_display(9, 0);
+			delay(time);
+			led_display(9, 1);
+			delay(time);
+			led_display(9, 0);
+			delay(time);
+			led_display(9, 1);
+			delay(time);
+			/* Se reinicia el contador cada vez que cuenta a 16 hasta que
+			se terminan los 99 números posibles */
+			contador = 0;
+		}
+
 		if(GP3)  // Cuando el botón está presionado (configuración pull down)
 		{
-			contador = contador + 1;
-			
 			while (GP3)
 			{
 				led_display(numero1, 0);
 				delay(time);
 				led_display(numero2, 1);
 				delay(time);
-			}
-
-			if (contador == 16)
-			{
-				led_display(9, 0);
-				delay(time);
-				led_display(9, 1);
-				delay(time);
-				led_display(9, 0);
-				delay(time);
-				led_display(9, 1);
-				delay(time);
-				led_display(9, 0);
-				delay(time);
-				led_display(9, 1);
-				delay(time);
-				contador = 0;
 			}
 		}
 	}
@@ -98,10 +107,10 @@ void led_display(int valor, int display)
 
 		else if (valor == 8) GPIO = 0b00010000;
 
-		else if (valor == 9) GPIO = 0b00010001;
+		else GPIO = 0b00010001;
 	}
 
-	else if (display == 1)
+	else  // display == 1
 	{
 		if (valor == 0) GPIO = 0b00100000;
 
@@ -121,10 +130,11 @@ void led_display(int valor, int display)
 
 		else if (valor == 8) GPIO = 0b00110000;
 
-		else if (valor == 9) GPIO = 0b00110001;
+		else GPIO = 0b00110001;
 	}
 }
 
+/* Función de atraso - delay*/
 void delay(unsigned int tiempo)
 {
 	unsigned int i;

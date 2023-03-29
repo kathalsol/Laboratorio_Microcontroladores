@@ -89,7 +89,6 @@ r0x1013	res	1
 r0x1012	res	1
 r0x100B	res	1
 r0x100A	res	1
-r0x100D	res	1
 r0x100C	res	1
 r0x1003	res	1
 r0x1002	res	1
@@ -152,8 +151,16 @@ code_labo1	code
 ;   _delay
 ;   _led_display
 ;   _delay
+;   _led_display
+;   _delay
+;   _led_display
+;   _delay
 ;   _get_rand
 ;   _get_rand
+;   _led_display
+;   _delay
+;   _led_display
+;   _delay
 ;   _led_display
 ;   _delay
 ;   _led_display
@@ -188,7 +195,7 @@ code_labo1	code
 S_labo1__main	code
 _main:
 ; 2 exit points
-;	.line	13; "labo1.c"	TRISIO = 0b00001000; // Poner todos los pines como salidas
+;	.line	13; "labo1.c"	TRISIO = 0b00001000; // Poner todos los pines como salidas, GP3 como entrada por default
 	MOVLW	0x08
 	BANKSEL	_TRISIO
 	MOVWF	_TRISIO
@@ -200,7 +207,7 @@ _main:
 	CLRF	r0x1014
 	CLRF	r0x1015
 _00113_DS_:
-;	.line	25; "labo1.c"	numero1 = get_rand(0,9);
+;	.line	24; "labo1.c"	numero1 = get_rand(0,9);
 	MOVLW	0x09
 	MOVWF	STK02
 	MOVLW	0x00
@@ -215,7 +222,7 @@ _00113_DS_:
 	MOVWF	r0x1016
 	MOVF	STK00,W
 	MOVWF	r0x1017
-;	.line	26; "labo1.c"	numero2 = get_rand(0,9);
+;	.line	25; "labo1.c"	numero2 = get_rand(0,9);
 	MOVLW	0x09
 	MOVWF	STK02
 	MOVLW	0x00
@@ -230,7 +237,7 @@ _00113_DS_:
 	MOVWF	r0x1018
 	MOVF	STK00,W
 	MOVWF	r0x1019
-;	.line	30; "labo1.c"	led_display(numero1, 0);
+;	.line	29; "labo1.c"	led_display(numero1, 0);
 	MOVLW	0x00
 	MOVWF	STK02
 	MOVLW	0x00
@@ -241,14 +248,14 @@ _00113_DS_:
 	PAGESEL	_led_display
 	CALL	_led_display
 	PAGESEL	$
-;	.line	31; "labo1.c"	delay(time);
+;	.line	30; "labo1.c"	delay(time);
 	MOVLW	0x0a
 	MOVWF	STK00
 	MOVLW	0x00
 	PAGESEL	_delay
 	CALL	_delay
 	PAGESEL	$
-;	.line	32; "labo1.c"	led_display(numero2, 1);
+;	.line	31; "labo1.c"	led_display(numero2, 1);
 	MOVLW	0x01
 	MOVWF	STK02
 	MOVLW	0x00
@@ -260,36 +267,35 @@ _00113_DS_:
 	PAGESEL	_led_display
 	CALL	_led_display
 	PAGESEL	$
-;	.line	33; "labo1.c"	delay(time);
+;	.line	32; "labo1.c"	delay(time);
 	MOVLW	0x0a
 	MOVWF	STK00
 	MOVLW	0x00
 	PAGESEL	_delay
 	CALL	_delay
 	PAGESEL	$
-;	.line	35; "labo1.c"	if(GP3)  // Cuando el botón está presionado (configuración pull down)
-	BANKSEL	_GPIObits
-	BTFSS	_GPIObits,3
-	GOTO	_00113_DS_
-;	.line	37; "labo1.c"	contador = contador + 1;
+;	.line	34; "labo1.c"	contador = contador + 1;
 	BANKSEL	r0x1014
 	INCF	r0x1014,F
 	BTFSC	STATUS,2
 	INCF	r0x1015,F
-_00105_DS_:
-;	.line	39; "labo1.c"	while (GP3)
-	BANKSEL	_GPIObits
-	BTFSS	_GPIObits,3
-	GOTO	_00107_DS_
-;	.line	41; "labo1.c"	led_display(numero1, 0);
+;	.line	39; "labo1.c"	if (contador == 16)
+	MOVF	r0x1014,W
+	XORLW	0x10
+	BTFSS	STATUS,2
+	GOTO	_00106_DS_
+	MOVF	r0x1015,W
+	XORLW	0x00
+	BTFSS	STATUS,2
+	GOTO	_00106_DS_
+;	.line	41; "labo1.c"	led_display(9, 0);
 	MOVLW	0x00
 	MOVWF	STK02
 	MOVLW	0x00
 	MOVWF	STK01
-	BANKSEL	r0x1017
-	MOVF	r0x1017,W
+	MOVLW	0x09
 	MOVWF	STK00
-	MOVF	r0x1016,W
+	MOVLW	0x00
 	PAGESEL	_led_display
 	CALL	_led_display
 	PAGESEL	$
@@ -300,15 +306,14 @@ _00105_DS_:
 	PAGESEL	_delay
 	CALL	_delay
 	PAGESEL	$
-;	.line	43; "labo1.c"	led_display(numero2, 1);
+;	.line	43; "labo1.c"	led_display(9, 1);
 	MOVLW	0x01
 	MOVWF	STK02
 	MOVLW	0x00
 	MOVWF	STK01
-	BANKSEL	r0x1019
-	MOVF	r0x1019,W
+	MOVLW	0x09
 	MOVWF	STK00
-	MOVF	r0x1018,W
+	MOVLW	0x00
 	PAGESEL	_led_display
 	CALL	_led_display
 	PAGESEL	$
@@ -319,18 +324,42 @@ _00105_DS_:
 	PAGESEL	_delay
 	CALL	_delay
 	PAGESEL	$
-	GOTO	_00105_DS_
-_00107_DS_:
-;	.line	47; "labo1.c"	if (contador == 16)
-	BANKSEL	r0x1014
-	MOVF	r0x1014,W
-	XORLW	0x10
-	BTFSS	STATUS,2
-	GOTO	_00113_DS_
-	MOVF	r0x1015,W
-	XORLW	0x00
-	BTFSS	STATUS,2
-	GOTO	_00113_DS_
+;	.line	45; "labo1.c"	led_display(9, 0);
+	MOVLW	0x00
+	MOVWF	STK02
+	MOVLW	0x00
+	MOVWF	STK01
+	MOVLW	0x09
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_led_display
+	CALL	_led_display
+	PAGESEL	$
+;	.line	46; "labo1.c"	delay(time);
+	MOVLW	0x0a
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_delay
+	CALL	_delay
+	PAGESEL	$
+;	.line	47; "labo1.c"	led_display(9, 1);
+	MOVLW	0x01
+	MOVWF	STK02
+	MOVLW	0x00
+	MOVWF	STK01
+	MOVLW	0x09
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_led_display
+	CALL	_led_display
+	PAGESEL	$
+;	.line	48; "labo1.c"	delay(time);
+	MOVLW	0x0a
+	MOVWF	STK00
+	MOVLW	0x00
+	PAGESEL	_delay
+	CALL	_delay
+	PAGESEL	$
 ;	.line	49; "labo1.c"	led_display(9, 0);
 	MOVLW	0x00
 	MOVWF	STK02
@@ -403,48 +432,60 @@ _00107_DS_:
 	PAGESEL	_delay
 	CALL	_delay
 	PAGESEL	$
-;	.line	57; "labo1.c"	led_display(9, 0);
+;	.line	59; "labo1.c"	contador = 0;
+	BANKSEL	r0x1014
+	CLRF	r0x1014
+	CLRF	r0x1015
+_00106_DS_:
+;	.line	62; "labo1.c"	if(GP3)  // Cuando el botón está presionado (configuración pull down)
+	BANKSEL	_GPIObits
+	BTFSS	_GPIObits,3
+	GOTO	_00113_DS_
+_00107_DS_:
+;	.line	64; "labo1.c"	while (GP3)
+	BANKSEL	_GPIObits
+	BTFSS	_GPIObits,3
+	GOTO	_00113_DS_
+;	.line	66; "labo1.c"	led_display(numero1, 0);
 	MOVLW	0x00
 	MOVWF	STK02
 	MOVLW	0x00
 	MOVWF	STK01
-	MOVLW	0x09
+	BANKSEL	r0x1017
+	MOVF	r0x1017,W
 	MOVWF	STK00
-	MOVLW	0x00
+	MOVF	r0x1016,W
 	PAGESEL	_led_display
 	CALL	_led_display
 	PAGESEL	$
-;	.line	58; "labo1.c"	delay(time);
+;	.line	67; "labo1.c"	delay(time);
 	MOVLW	0x0a
 	MOVWF	STK00
 	MOVLW	0x00
 	PAGESEL	_delay
 	CALL	_delay
 	PAGESEL	$
-;	.line	59; "labo1.c"	led_display(9, 1);
+;	.line	68; "labo1.c"	led_display(numero2, 1);
 	MOVLW	0x01
 	MOVWF	STK02
 	MOVLW	0x00
 	MOVWF	STK01
-	MOVLW	0x09
+	BANKSEL	r0x1019
+	MOVF	r0x1019,W
 	MOVWF	STK00
-	MOVLW	0x00
+	MOVF	r0x1018,W
 	PAGESEL	_led_display
 	CALL	_led_display
 	PAGESEL	$
-;	.line	60; "labo1.c"	delay(time);
+;	.line	69; "labo1.c"	delay(time);
 	MOVLW	0x0a
 	MOVWF	STK00
 	MOVLW	0x00
 	PAGESEL	_delay
 	CALL	_delay
 	PAGESEL	$
-;	.line	61; "labo1.c"	contador = 0;
-	BANKSEL	r0x1014
-	CLRF	r0x1014
-	CLRF	r0x1015
-	GOTO	_00113_DS_
-;	.line	65; "labo1.c"	}
+	GOTO	_00107_DS_
+;	.line	73; "labo1.c"	}
 	RETURN	
 ; exit point of _main
 
@@ -466,33 +507,33 @@ _00107_DS_:
 S_labo1__delay	code
 _delay:
 ; 2 exit points
-;	.line	128; "labo1.c"	void delay(unsigned int tiempo)
+;	.line	136; "labo1.c"	void delay(unsigned int tiempo)
 	BANKSEL	r0x1002
 	MOVWF	r0x1002
 	MOVF	STK00,W
 	MOVWF	r0x1003
-;	.line	133; "labo1.c"	for(i=0;i<tiempo;i++)
+;	.line	141; "labo1.c"	for(i=0;i<tiempo;i++)
 	CLRF	r0x1004
 	CLRF	r0x1005
-_00196_DS_:
+_00190_DS_:
 	BANKSEL	r0x1002
 	MOVF	r0x1002,W
 	SUBWF	r0x1005,W
 	BTFSS	STATUS,2
-	GOTO	_00217_DS_
+	GOTO	_00211_DS_
 	MOVF	r0x1003,W
 	SUBWF	r0x1004,W
-_00217_DS_:
+_00211_DS_:
 	BTFSC	STATUS,0
-	GOTO	_00198_DS_
-;;genSkipc:3307: created from rifx:0x7ffff2b3d6a0
-;	.line	134; "labo1.c"	for(j=0;j<1275;j++);
+	GOTO	_00192_DS_
+;;genSkipc:3307: created from rifx:0x7ffc082a73b0
+;	.line	142; "labo1.c"	for(j=0;j<1275;j++);
 	MOVLW	0xfb
 	BANKSEL	r0x1006
 	MOVWF	r0x1006
 	MOVLW	0x04
 	MOVWF	r0x1007
-_00194_DS_:
+_00188_DS_:
 	MOVLW	0xff
 	BANKSEL	r0x1006
 	ADDWF	r0x1006,W
@@ -510,14 +551,14 @@ _00194_DS_:
 	MOVF	r0x1009,W
 	IORWF	r0x1008,W
 	BTFSS	STATUS,2
-	GOTO	_00194_DS_
-;	.line	133; "labo1.c"	for(i=0;i<tiempo;i++)
+	GOTO	_00188_DS_
+;	.line	141; "labo1.c"	for(i=0;i<tiempo;i++)
 	INCF	r0x1004,F
 	BTFSC	STATUS,2
 	INCF	r0x1005,F
-	GOTO	_00196_DS_
-_00198_DS_:
-;	.line	135; "labo1.c"	}
+	GOTO	_00190_DS_
+_00192_DS_:
+;	.line	143; "labo1.c"	}
 	RETURN	
 ; exit point of _delay
 
@@ -537,7 +578,7 @@ _00198_DS_:
 S_labo1__led_display	code
 _led_display:
 ; 2 exit points
-;	.line	79; "labo1.c"	void led_display(int valor, int display)
+;	.line	87; "labo1.c"	void led_display(int valor, int display)
 	BANKSEL	r0x100A
 	MOVWF	r0x100A
 	MOVF	STK00,W
@@ -545,310 +586,283 @@ _led_display:
 	MOVF	STK01,W
 	MOVWF	r0x100C
 	MOVF	STK02,W
-;	.line	81; "labo1.c"	if (display == 0)
-	MOVWF	r0x100D
+;;1	MOVWF	r0x100D
+;	.line	89; "labo1.c"	if (display == 0)
 	IORWF	r0x100C,W
 	BTFSS	STATUS,2
-	GOTO	_00183_DS_
-;	.line	83; "labo1.c"	if (valor == 0) GPIO = 0b00000000;
+	GOTO	_00177_DS_
+;	.line	91; "labo1.c"	if (valor == 0) GPIO = 0b00000000;
 	MOVF	r0x100A,W
 	IORWF	r0x100B,W
 	BTFSS	STATUS,2
-	GOTO	_00149_DS_
+	GOTO	_00147_DS_
 	BANKSEL	_GPIO
 	CLRF	_GPIO
-	GOTO	_00185_DS_
-_00149_DS_:
-;	.line	85; "labo1.c"	else if (valor == 1) GPIO = 0b00000001; 
+	GOTO	_00179_DS_
+_00147_DS_:
+;	.line	93; "labo1.c"	else if (valor == 1) GPIO = 0b00000001; 
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x01
 	BTFSS	STATUS,2
-	GOTO	_00146_DS_
+	GOTO	_00144_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00146_DS_
+	GOTO	_00144_DS_
 	MOVLW	0x01
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00146_DS_:
-;	.line	87; "labo1.c"	else if (valor == 2) GPIO = 0b00000010; 
+	GOTO	_00179_DS_
+_00144_DS_:
+;	.line	95; "labo1.c"	else if (valor == 2) GPIO = 0b00000010; 
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x02
 	BTFSS	STATUS,2
-	GOTO	_00143_DS_
+	GOTO	_00141_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00143_DS_
+	GOTO	_00141_DS_
 	MOVLW	0x02
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00143_DS_:
-;	.line	89; "labo1.c"	else if (valor == 3) GPIO = 0b00000011;
+	GOTO	_00179_DS_
+_00141_DS_:
+;	.line	97; "labo1.c"	else if (valor == 3) GPIO = 0b00000011;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x03
 	BTFSS	STATUS,2
-	GOTO	_00140_DS_
+	GOTO	_00138_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00140_DS_
+	GOTO	_00138_DS_
 	MOVLW	0x03
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00140_DS_:
-;	.line	91; "labo1.c"	else if (valor == 4) GPIO = 0b00000100;
+	GOTO	_00179_DS_
+_00138_DS_:
+;	.line	99; "labo1.c"	else if (valor == 4) GPIO = 0b00000100;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x04
 	BTFSS	STATUS,2
-	GOTO	_00137_DS_
+	GOTO	_00135_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00137_DS_
+	GOTO	_00135_DS_
 	MOVLW	0x04
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00137_DS_:
-;	.line	93; "labo1.c"	else if (valor == 5) GPIO = 0b00000101;
+	GOTO	_00179_DS_
+_00135_DS_:
+;	.line	101; "labo1.c"	else if (valor == 5) GPIO = 0b00000101;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x05
 	BTFSS	STATUS,2
-	GOTO	_00134_DS_
+	GOTO	_00132_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00134_DS_
+	GOTO	_00132_DS_
 	MOVLW	0x05
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00134_DS_:
-;	.line	95; "labo1.c"	else if (valor == 6) GPIO = 0b00000110;
+	GOTO	_00179_DS_
+_00132_DS_:
+;	.line	103; "labo1.c"	else if (valor == 6) GPIO = 0b00000110;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x06
 	BTFSS	STATUS,2
-	GOTO	_00131_DS_
+	GOTO	_00129_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00131_DS_
+	GOTO	_00129_DS_
 	MOVLW	0x06
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00131_DS_:
-;	.line	97; "labo1.c"	else if (valor == 7) GPIO = 0b00000111;
+	GOTO	_00179_DS_
+_00129_DS_:
+;	.line	105; "labo1.c"	else if (valor == 7) GPIO = 0b00000111;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x07
 	BTFSS	STATUS,2
-	GOTO	_00128_DS_
+	GOTO	_00126_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00128_DS_
+	GOTO	_00126_DS_
 	MOVLW	0x07
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00128_DS_:
-;	.line	99; "labo1.c"	else if (valor == 8) GPIO = 0b00010000;
+	GOTO	_00179_DS_
+_00126_DS_:
+;	.line	107; "labo1.c"	else if (valor == 8) GPIO = 0b00010000;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x08
 	BTFSS	STATUS,2
-	GOTO	_00125_DS_
+	GOTO	_00123_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00125_DS_
+	GOTO	_00123_DS_
 	MOVLW	0x10
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00125_DS_:
-;	.line	101; "labo1.c"	else if (valor == 9) GPIO = 0b00010001;
-	BANKSEL	r0x100B
-	MOVF	r0x100B,W
-	XORLW	0x09
-	BTFSS	STATUS,2
-	GOTO	_00185_DS_
-	MOVF	r0x100A,W
-	XORLW	0x00
-	BTFSS	STATUS,2
-	GOTO	_00185_DS_
+	GOTO	_00179_DS_
+_00123_DS_:
+;	.line	109; "labo1.c"	else GPIO = 0b00010001;
 	MOVLW	0x11
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00183_DS_:
-;	.line	104; "labo1.c"	else if (display == 1)
-	BANKSEL	r0x100D
-	MOVF	r0x100D,W
-	XORLW	0x01
-	BTFSS	STATUS,2
-	GOTO	_00185_DS_
-	MOVF	r0x100C,W
-	XORLW	0x00
-	BTFSS	STATUS,2
-	GOTO	_00185_DS_
-;	.line	106; "labo1.c"	if (valor == 0) GPIO = 0b00100000;
+	GOTO	_00179_DS_
+_00177_DS_:
+;	.line	114; "labo1.c"	if (valor == 0) GPIO = 0b00100000;
+	BANKSEL	r0x100A
 	MOVF	r0x100A,W
 	IORWF	r0x100B,W
 	BTFSS	STATUS,2
-	GOTO	_00178_DS_
+	GOTO	_00174_DS_
 	MOVLW	0x20
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00178_DS_:
-;	.line	108; "labo1.c"	else if (valor == 1) GPIO = 0b00100001; 
+	GOTO	_00179_DS_
+_00174_DS_:
+;	.line	116; "labo1.c"	else if (valor == 1) GPIO = 0b00100001; 
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x01
 	BTFSS	STATUS,2
-	GOTO	_00175_DS_
+	GOTO	_00171_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00175_DS_
+	GOTO	_00171_DS_
 	MOVLW	0x21
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00175_DS_:
-;	.line	110; "labo1.c"	else if (valor == 2) GPIO = 0b00100010; 
+	GOTO	_00179_DS_
+_00171_DS_:
+;	.line	118; "labo1.c"	else if (valor == 2) GPIO = 0b00100010; 
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x02
 	BTFSS	STATUS,2
-	GOTO	_00172_DS_
+	GOTO	_00168_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00172_DS_
+	GOTO	_00168_DS_
 	MOVLW	0x22
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00172_DS_:
-;	.line	112; "labo1.c"	else if (valor == 3) GPIO = 0b00100011;
+	GOTO	_00179_DS_
+_00168_DS_:
+;	.line	120; "labo1.c"	else if (valor == 3) GPIO = 0b00100011;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x03
 	BTFSS	STATUS,2
-	GOTO	_00169_DS_
+	GOTO	_00165_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00169_DS_
+	GOTO	_00165_DS_
 	MOVLW	0x23
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00169_DS_:
-;	.line	114; "labo1.c"	else if (valor == 4) GPIO = 0b00100100;
+	GOTO	_00179_DS_
+_00165_DS_:
+;	.line	122; "labo1.c"	else if (valor == 4) GPIO = 0b00100100;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x04
 	BTFSS	STATUS,2
-	GOTO	_00166_DS_
+	GOTO	_00162_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00166_DS_
+	GOTO	_00162_DS_
 	MOVLW	0x24
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00166_DS_:
-;	.line	116; "labo1.c"	else if (valor == 5) GPIO = 0b00100101;
+	GOTO	_00179_DS_
+_00162_DS_:
+;	.line	124; "labo1.c"	else if (valor == 5) GPIO = 0b00100101;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x05
 	BTFSS	STATUS,2
-	GOTO	_00163_DS_
+	GOTO	_00159_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00163_DS_
+	GOTO	_00159_DS_
 	MOVLW	0x25
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00163_DS_:
-;	.line	118; "labo1.c"	else if (valor == 6) GPIO = 0b00100110;
+	GOTO	_00179_DS_
+_00159_DS_:
+;	.line	126; "labo1.c"	else if (valor == 6) GPIO = 0b00100110;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x06
 	BTFSS	STATUS,2
-	GOTO	_00160_DS_
+	GOTO	_00156_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00160_DS_
+	GOTO	_00156_DS_
 	MOVLW	0x26
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00160_DS_:
-;	.line	120; "labo1.c"	else if (valor == 7) GPIO = 0b00100111;
+	GOTO	_00179_DS_
+_00156_DS_:
+;	.line	128; "labo1.c"	else if (valor == 7) GPIO = 0b00100111;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x07
 	BTFSS	STATUS,2
-	GOTO	_00157_DS_
+	GOTO	_00153_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00157_DS_
+	GOTO	_00153_DS_
 	MOVLW	0x27
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00157_DS_:
-;	.line	122; "labo1.c"	else if (valor == 8) GPIO = 0b00110000;
+	GOTO	_00179_DS_
+_00153_DS_:
+;	.line	130; "labo1.c"	else if (valor == 8) GPIO = 0b00110000;
 	BANKSEL	r0x100B
 	MOVF	r0x100B,W
 	XORLW	0x08
 	BTFSS	STATUS,2
-	GOTO	_00154_DS_
+	GOTO	_00150_DS_
 	MOVF	r0x100A,W
 	XORLW	0x00
 	BTFSS	STATUS,2
-	GOTO	_00154_DS_
+	GOTO	_00150_DS_
 	MOVLW	0x30
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-	GOTO	_00185_DS_
-_00154_DS_:
-;	.line	124; "labo1.c"	else if (valor == 9) GPIO = 0b00110001;
-	BANKSEL	r0x100B
-	MOVF	r0x100B,W
-	XORLW	0x09
-	BTFSS	STATUS,2
-	GOTO	_00185_DS_
-	MOVF	r0x100A,W
-	XORLW	0x00
-	BTFSS	STATUS,2
-	GOTO	_00185_DS_
+	GOTO	_00179_DS_
+_00150_DS_:
+;	.line	132; "labo1.c"	else GPIO = 0b00110001;
 	MOVLW	0x31
 	BANKSEL	_GPIO
 	MOVWF	_GPIO
-_00185_DS_:
-;	.line	126; "labo1.c"	}
+_00179_DS_:
+;	.line	134; "labo1.c"	}
 	RETURN	
 ; exit point of _led_display
 
@@ -879,7 +893,7 @@ _00185_DS_:
 S_labo1__get_rand	code
 _get_rand:
 ; 2 exit points
-;	.line	68; "labo1.c"	unsigned int get_rand(unsigned int min, unsigned int max)
+;	.line	76; "labo1.c"	unsigned int get_rand(unsigned int min, unsigned int max)
 	BANKSEL	r0x100E
 	MOVWF	r0x100E
 	MOVF	STK00,W
@@ -888,7 +902,7 @@ _get_rand:
 	MOVWF	r0x1010
 	MOVF	STK02,W
 	MOVWF	r0x1011
-;	.line	72; "labo1.c"	rand += ((rand * rand) /100) % 10000;
+;	.line	80; "labo1.c"	rand += ((rand * rand) /100) % 10000;
 	BANKSEL	_get_rand_rand_65536_12
 	MOVF	_get_rand_rand_65536_12,W
 	MOVWF	STK02
@@ -943,7 +957,7 @@ _get_rand:
 	BANKSEL	_get_rand_rand_65536_12
 	ADDWF	(_get_rand_rand_65536_12 + 1),F
 _00001_DS_:
-;	.line	74; "labo1.c"	return rand % (max+1-min)+min;
+;	.line	82; "labo1.c"	return rand % (max+1-min)+min;
 	BANKSEL	r0x1011
 	INCF	r0x1011,F
 	BTFSC	STATUS,2
@@ -979,12 +993,12 @@ _00001_DS_:
 	MOVF	r0x100F,W
 	MOVWF	STK00
 	MOVF	r0x100E,W
-;	.line	76; "labo1.c"	}
+;	.line	84; "labo1.c"	}
 	RETURN	
 ; exit point of _get_rand
 
 
 ;	code size estimation:
-;	  513+  120 =   633 instructions ( 1506 byte)
+;	  511+  125 =   636 instructions ( 1522 byte)
 
 	end
