@@ -10,7 +10,7 @@ Circuit Id: Probe-757
 
 Unique  Id: Probe-756: 
 Circuit Id: Probe-756
-<item boardPos="-1e+6,-1e+6" rotation="-45" Show_id="false" valLabRot="45" vflip="1" valLabely="0" x="-424" circPos="0,0" valLabelx="16" labely="-16" mainComp="false" circRot="nan" boardRot="-1e+6" Show_volt="true" Threshold="2.5" hflip="1" labelrot="45" objectName="Probe-756" y="-232" labelx="16" id="Probe-756" itemtype="Probe"/>
+<item boardPos="-1e+6,-1e+6" rotation="-45" Show_id="false" valLabRot="45" vflip="1" valLabely="0" x="-408" circPos="0,0" valLabelx="16" labely="-16" mainComp="false" circRot="nan" boardRot="-1e+6" Show_volt="true" Threshold="2.5" hflip="1" labelrot="45" objectName="Probe-756" y="-232" labelx="16" id="Probe-756" itemtype="Probe"/>
 
 Unique  Id: Resistor-27: 
 Circuit Id: Resistor-26
