@@ -10,6 +10,13 @@ word __at 0x2007 __CONFIG = (_WDTE_OFF & _WDT_OFF & _MCLRE_OFF);
 void delay (unsigned tiempo);
 unsigned int get_rand(unsigned int min, unsigned int max);
 void led_display(int valor, int display);
+void check_array(unsigned int num);
+void addNumber(unsigned int num);
+
+
+int bingo[100];
+int isInside = 0;
+unsigned int contador, contabingo = 0;
 
 void main(void)
 {
@@ -18,11 +25,13 @@ void main(void)
 
 	unsigned int time = 10;
 	unsigned int numero1, numero2;
-	unsigned int contador = 0;
+	unsigned int numero;
+	
 
 	//Loop forever
 	while( 1 )
 	{
+		isInside = 0;
 		// Se obtienen los dos números aleatorios
 		numero1 = get_rand(0,9);
 		numero2 = get_rand(0,9);
@@ -64,13 +73,15 @@ void main(void)
 
 		if(GP3)  // Cuando el botón está presionado (configuración pull down)
 		{
-			while (GP3)
-			{
+			numero = numero1*10 + numero2;
+			printf("%d", numero);
+			check_array(numero);
+			if(!isInside){
+				addNumber(numero);
 				led_display(numero1, 0);
 				delay(time);
 				led_display(numero2, 1);
 				delay(time);
-
 			}
 		}
 	}
@@ -85,6 +96,17 @@ unsigned int get_rand(unsigned int min, unsigned int max)
 
     return rand % (max+1-min)+min;
 
+}
+
+void check_array(unsigned int num){
+	for(int i = 0; i < 100; i++){
+		if(bingo[i] == num) isInside = 1;
+	}
+}
+
+void addNumber(unsigned int num){
+	bingo[contabingo] = num;
+	contabingo++;
 }
 
 /* Función que muestra debidamente los números en cada display*/
