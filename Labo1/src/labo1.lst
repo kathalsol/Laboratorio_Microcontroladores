@@ -1,0 +1,1021 @@
+gplink-1.4.0 #1107 (Jan  1 2021)
+Copyright (c) 1998-2014 gputils project
+Listing File Generated: 3-30-2023  09:10:42
+ 
+ 
+Address  Value    Disassembly              Source
+-------  -----    -----------              ------
+                                           ;--------------------------------------------------------
+                                           ; File Created by SDCC : free open source ANSI-C Compiler
+                                           ; Version 4.0.0 #11528 (Linux)
+                                           ;--------------------------------------------------------
+                                           ; PIC port for the 14-bit core
+                                           ;--------------------------------------------------------
+                                           ;	.file	"labo1.c"
+                                           	list	p=12f683
+                                           	radix dec
+                                           	include "p12f683.inc"
+                                                   LIST
+                                           
+                                           ;==========================================================================
+                                           ; Build date : Aug 07 2014
+                                           ;  MPASM PIC12F683 processor include
+                                           ; 
+                                           ;  (c) Copyright 1999-2014 Microchip Technology, All rights reserved
+                                           ;==========================================================================
+                                           
+                                                   NOLIST
+                                           ;--------------------------------------------------------
+                                           ; config word(s)
+                                           ;--------------------------------------------------------
+002007   3fd7     addlw   0xd7             	__config 0x3fd7
+                                           ;--------------------------------------------------------
+                                           ; external declarations
+                                           ;--------------------------------------------------------
+                                           	extern	__moduint
+                                           	extern	__divuint
+                                           	extern	__mulint
+                                           	extern	_TRISIO
+                                           	extern	_GPIO
+                                           	extern	_GPIObits
+                                           	extern	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; global declarations
+                                           ;--------------------------------------------------------
+                                           	global	_main
+                                           	global	_get_rand
+                                           	global	_led_display
+                                           	global	_delay
+                                           
+                                           	global PSAVE
+                                           	global SSAVE
+                                           	global WSAVE
+                                           	global STK12
+                                           	global STK11
+                                           	global STK10
+                                           	global STK09
+                                           	global STK08
+                                           	global STK07
+                                           	global STK06
+                                           	global STK05
+                                           	global STK04
+                                           	global STK03
+                                           	global STK02
+                                           	global STK01
+                                           	global STK00
+                                           
+                                           sharebank udata_ovr 0x0070
+                                           PSAVE	res 1
+                                           SSAVE	res 1
+                                           WSAVE	res 1
+                                           STK12	res 1
+                                           STK11	res 1
+                                           STK10	res 1
+                                           STK09	res 1
+                                           STK08	res 1
+                                           STK07	res 1
+                                           STK06	res 1
+                                           STK05	res 1
+                                           STK04	res 1
+                                           STK03	res 1
+                                           STK02	res 1
+                                           STK01	res 1
+                                           STK00	res 1
+                                           
+                                           ;--------------------------------------------------------
+                                           ; global definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; absolute symbol definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; compiler-defined variables
+                                           ;--------------------------------------------------------
+                                           UDL_labo1_0	udata
+                                           r0x1014	res	1
+                                           r0x1015	res	1
+                                           r0x1017	res	1
+                                           r0x1016	res	1
+                                           r0x1019	res	1
+                                           r0x1018	res	1
+                                           r0x100F	res	1
+                                           r0x100E	res	1
+                                           r0x1011	res	1
+                                           r0x1010	res	1
+                                           r0x1013	res	1
+                                           r0x1012	res	1
+                                           r0x100B	res	1
+                                           r0x100A	res	1
+                                           r0x100C	res	1
+                                           r0x1003	res	1
+                                           r0x1002	res	1
+                                           r0x1004	res	1
+                                           r0x1005	res	1
+                                           r0x1006	res	1
+                                           r0x1007	res	1
+                                           r0x1008	res	1
+                                           r0x1009	res	1
+                                           ;--------------------------------------------------------
+                                           ; initialized data
+                                           ;--------------------------------------------------------
+                                           
+                                           IDD_labo1_0	idata
+                                           _get_rand_rand_65536_54
+                                           	db	0xe7, 0x03	; 999
+                                           
+                                           ;--------------------------------------------------------
+                                           ; initialized absolute data
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; overlayable items in internal ram 
+                                           ;--------------------------------------------------------
+                                           ;	udata_ovr
+                                           ;--------------------------------------------------------
+                                           ; reset vector 
+                                           ;--------------------------------------------------------
+                                           STARTUP	code 0x0000
+000000   0000     nop                      	nop
+                                           	pagesel __sdcc_gsinit_startup
+000001   29be     goto    0x01be           	goto	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; code
+                                           ;--------------------------------------------------------
+                                           code_labo1	code
+                                           ;***
+                                           ;  pBlock Stats: dbName = M
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _get_rand
+                                           ;   _get_rand
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _get_rand
+                                           ;   _get_rand
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;   _led_display
+                                           ;   _delay
+                                           ;9 compiler assigned registers:
+                                           ;   r0x1014
+                                           ;   r0x1015
+                                           ;   STK02
+                                           ;   STK01
+                                           ;   STK00
+                                           ;   r0x1016
+                                           ;   r0x1017
+                                           ;   r0x1018
+                                           ;   r0x1019
+                                           ;; Starting pCode block
+                                           S_labo1__main	code
+                                           _main:
+                                           ; 2 exit points
+                                           ;	.line	16; "labo1.c"	TRISIO = 0b00001000; // Poner todos los pines como salidas, GP3 como entrada por default
+0000f4   3008     movlw   0x08             	MOVLW	0x08
+0000f5   1683     bsf     0x03, 0x5        	BANKSEL	_TRISIO
+0000f6   0085     movwf   0x05             	MOVWF	_TRISIO
+                                           ;	.line	17; "labo1.c"	GPIO = 0x00; //Poner pines en bajo
+0000f7   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000f8   0185     clrf    0x05             	CLRF	_GPIO
+                                           ;	.line	21; "labo1.c"	unsigned int contador = 0;
+0000f9   1683     bsf     0x03, 0x5        	BANKSEL	r0x1014
+0000fa   01a0     clrf    0x20             	CLRF	r0x1014
+0000fb   01a1     clrf    0x21             	CLRF	r0x1015
+                                           _00113_DS_:
+                                           ;	.line	27; "labo1.c"	numero1 = get_rand(0,9);
+0000fc   3009     movlw   0x09             	MOVLW	0x09
+0000fd   00fd     movwf   0x7d             	MOVWF	STK02
+0000fe   3000     movlw   0x00             	MOVLW	0x00
+0000ff   00fe     movwf   0x7e             	MOVWF	STK01
+000100   3000     movlw   0x00             	MOVLW	0x00
+000101   00ff     movwf   0x7f             	MOVWF	STK00
+000102   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_get_rand
+000103   22de     call    0x02de           	CALL	_get_rand
+                                           	PAGESEL	$
+000104   1683     bsf     0x03, 0x5        	BANKSEL	r0x1016
+000105   00a3     movwf   0x23             	MOVWF	r0x1016
+000106   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000107   00a2     movwf   0x22             	MOVWF	r0x1017
+                                           ;	.line	28; "labo1.c"	numero2 = get_rand(0,9);
+000108   3009     movlw   0x09             	MOVLW	0x09
+000109   00fd     movwf   0x7d             	MOVWF	STK02
+00010a   3000     movlw   0x00             	MOVLW	0x00
+00010b   00fe     movwf   0x7e             	MOVWF	STK01
+00010c   3000     movlw   0x00             	MOVLW	0x00
+00010d   00ff     movwf   0x7f             	MOVWF	STK00
+00010e   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_get_rand
+00010f   22de     call    0x02de           	CALL	_get_rand
+                                           	PAGESEL	$
+000110   1683     bsf     0x03, 0x5        	BANKSEL	r0x1018
+000111   00a5     movwf   0x25             	MOVWF	r0x1018
+000112   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000113   00a4     movwf   0x24             	MOVWF	r0x1019
+                                           ;	.line	32; "labo1.c"	led_display(numero1, 0);
+000114   3000     movlw   0x00             	MOVLW	0x00
+000115   00fd     movwf   0x7d             	MOVWF	STK02
+000116   3000     movlw   0x00             	MOVLW	0x00
+000117   00fe     movwf   0x7e             	MOVWF	STK01
+000118   0822     movf    0x22, 0x0        	MOVF	r0x1017,W
+000119   00ff     movwf   0x7f             	MOVWF	STK00
+00011a   0823     movf    0x23, 0x0        	MOVF	r0x1016,W
+                                           	PAGESEL	_led_display
+00011b   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	33; "labo1.c"	delay(time);
+00011c   300a     movlw   0x0a             	MOVLW	0x0a
+00011d   00ff     movwf   0x7f             	MOVWF	STK00
+00011e   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+00011f   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	34; "labo1.c"	led_display(numero2, 1);
+000120   3001     movlw   0x01             	MOVLW	0x01
+000121   00fd     movwf   0x7d             	MOVWF	STK02
+000122   3000     movlw   0x00             	MOVLW	0x00
+000123   00fe     movwf   0x7e             	MOVWF	STK01
+000124   1683     bsf     0x03, 0x5        	BANKSEL	r0x1019
+000125   0824     movf    0x24, 0x0        	MOVF	r0x1019,W
+000126   00ff     movwf   0x7f             	MOVWF	STK00
+000127   0825     movf    0x25, 0x0        	MOVF	r0x1018,W
+                                           	PAGESEL	_led_display
+000128   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	35; "labo1.c"	delay(time);
+000129   300a     movlw   0x0a             	MOVLW	0x0a
+00012a   00ff     movwf   0x7f             	MOVWF	STK00
+00012b   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+00012c   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	37; "labo1.c"	contador = contador + 1;
+00012d   1683     bsf     0x03, 0x5        	BANKSEL	r0x1014
+00012e   0aa0     incf    0x20, 0x1        	INCF	r0x1014,F
+00012f   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+000130   0aa1     incf    0x21, 0x1        	INCF	r0x1015,F
+                                           ;	.line	42; "labo1.c"	if (contador == 16)
+000131   0820     movf    0x20, 0x0        	MOVF	r0x1014,W
+000132   3a10     xorlw   0x10             	XORLW	0x10
+000133   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000134   299c     goto    0x019c           	GOTO	_00106_DS_
+000135   0821     movf    0x21, 0x0        	MOVF	r0x1015,W
+000136   3a00     xorlw   0x00             	XORLW	0x00
+000137   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000138   299c     goto    0x019c           	GOTO	_00106_DS_
+                                           ;	.line	44; "labo1.c"	led_display(9, 0);
+000139   3000     movlw   0x00             	MOVLW	0x00
+00013a   00fd     movwf   0x7d             	MOVWF	STK02
+00013b   3000     movlw   0x00             	MOVLW	0x00
+00013c   00fe     movwf   0x7e             	MOVWF	STK01
+00013d   3009     movlw   0x09             	MOVLW	0x09
+00013e   00ff     movwf   0x7f             	MOVWF	STK00
+00013f   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_led_display
+000140   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	45; "labo1.c"	delay(time);
+000141   300a     movlw   0x0a             	MOVLW	0x0a
+000142   00ff     movwf   0x7f             	MOVWF	STK00
+000143   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+000144   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	46; "labo1.c"	led_display(9, 1);
+000145   3001     movlw   0x01             	MOVLW	0x01
+000146   00fd     movwf   0x7d             	MOVWF	STK02
+000147   3000     movlw   0x00             	MOVLW	0x00
+000148   00fe     movwf   0x7e             	MOVWF	STK01
+000149   3009     movlw   0x09             	MOVLW	0x09
+00014a   00ff     movwf   0x7f             	MOVWF	STK00
+00014b   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_led_display
+00014c   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	47; "labo1.c"	delay(time);
+00014d   300a     movlw   0x0a             	MOVLW	0x0a
+00014e   00ff     movwf   0x7f             	MOVWF	STK00
+00014f   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+000150   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	48; "labo1.c"	led_display(9, 0);
+000151   3000     movlw   0x00             	MOVLW	0x00
+000152   00fd     movwf   0x7d             	MOVWF	STK02
+000153   3000     movlw   0x00             	MOVLW	0x00
+000154   00fe     movwf   0x7e             	MOVWF	STK01
+000155   3009     movlw   0x09             	MOVLW	0x09
+000156   00ff     movwf   0x7f             	MOVWF	STK00
+000157   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_led_display
+000158   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	49; "labo1.c"	delay(time);
+000159   300a     movlw   0x0a             	MOVLW	0x0a
+00015a   00ff     movwf   0x7f             	MOVWF	STK00
+00015b   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+00015c   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	50; "labo1.c"	led_display(9, 1);
+00015d   3001     movlw   0x01             	MOVLW	0x01
+00015e   00fd     movwf   0x7d             	MOVWF	STK02
+00015f   3000     movlw   0x00             	MOVLW	0x00
+000160   00fe     movwf   0x7e             	MOVWF	STK01
+000161   3009     movlw   0x09             	MOVLW	0x09
+000162   00ff     movwf   0x7f             	MOVWF	STK00
+000163   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_led_display
+000164   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	51; "labo1.c"	delay(time);
+000165   300a     movlw   0x0a             	MOVLW	0x0a
+000166   00ff     movwf   0x7f             	MOVWF	STK00
+000167   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+000168   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	52; "labo1.c"	led_display(9, 0);
+000169   3000     movlw   0x00             	MOVLW	0x00
+00016a   00fd     movwf   0x7d             	MOVWF	STK02
+00016b   3000     movlw   0x00             	MOVLW	0x00
+00016c   00fe     movwf   0x7e             	MOVWF	STK01
+00016d   3009     movlw   0x09             	MOVLW	0x09
+00016e   00ff     movwf   0x7f             	MOVWF	STK00
+00016f   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_led_display
+000170   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	53; "labo1.c"	delay(time);
+000171   300a     movlw   0x0a             	MOVLW	0x0a
+000172   00ff     movwf   0x7f             	MOVWF	STK00
+000173   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+000174   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	54; "labo1.c"	led_display(9, 1);
+000175   3001     movlw   0x01             	MOVLW	0x01
+000176   00fd     movwf   0x7d             	MOVWF	STK02
+000177   3000     movlw   0x00             	MOVLW	0x00
+000178   00fe     movwf   0x7e             	MOVWF	STK01
+000179   3009     movlw   0x09             	MOVLW	0x09
+00017a   00ff     movwf   0x7f             	MOVWF	STK00
+00017b   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_led_display
+00017c   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	55; "labo1.c"	delay(time);
+00017d   300a     movlw   0x0a             	MOVLW	0x0a
+00017e   00ff     movwf   0x7f             	MOVWF	STK00
+00017f   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+000180   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	56; "labo1.c"	led_display(9, 0);
+000181   3000     movlw   0x00             	MOVLW	0x00
+000182   00fd     movwf   0x7d             	MOVWF	STK02
+000183   3000     movlw   0x00             	MOVLW	0x00
+000184   00fe     movwf   0x7e             	MOVWF	STK01
+000185   3009     movlw   0x09             	MOVLW	0x09
+000186   00ff     movwf   0x7f             	MOVWF	STK00
+000187   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_led_display
+000188   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	57; "labo1.c"	delay(time);
+000189   300a     movlw   0x0a             	MOVLW	0x0a
+00018a   00ff     movwf   0x7f             	MOVWF	STK00
+00018b   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+00018c   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	58; "labo1.c"	led_display(9, 1);
+00018d   3001     movlw   0x01             	MOVLW	0x01
+00018e   00fd     movwf   0x7d             	MOVWF	STK02
+00018f   3000     movlw   0x00             	MOVLW	0x00
+000190   00fe     movwf   0x7e             	MOVWF	STK01
+000191   3009     movlw   0x09             	MOVLW	0x09
+000192   00ff     movwf   0x7f             	MOVWF	STK00
+000193   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_led_display
+000194   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	59; "labo1.c"	delay(time);
+000195   300a     movlw   0x0a             	MOVLW	0x0a
+000196   00ff     movwf   0x7f             	MOVWF	STK00
+000197   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+000198   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	62; "labo1.c"	contador = 0;
+000199   1683     bsf     0x03, 0x5        	BANKSEL	r0x1014
+00019a   01a0     clrf    0x20             	CLRF	r0x1014
+00019b   01a1     clrf    0x21             	CLRF	r0x1015
+                                           _00106_DS_:
+                                           ;	.line	65; "labo1.c"	if(GP3)  // Cuando el botón está presionado (configuración pull down)
+00019c   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
+00019d   1d85     btfss   0x05, 0x3        	BTFSS	_GPIObits,3
+00019e   28fc     goto    0x00fc           	GOTO	_00113_DS_
+                                           _00107_DS_:
+                                           ;	.line	68; "labo1.c"	while (GP3)
+00019f   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
+0001a0   1d85     btfss   0x05, 0x3        	BTFSS	_GPIObits,3
+0001a1   28fc     goto    0x00fc           	GOTO	_00113_DS_
+                                           ;	.line	70; "labo1.c"	led_display(numero1, 0);
+0001a2   3000     movlw   0x00             	MOVLW	0x00
+0001a3   00fd     movwf   0x7d             	MOVWF	STK02
+0001a4   3000     movlw   0x00             	MOVLW	0x00
+0001a5   00fe     movwf   0x7e             	MOVWF	STK01
+0001a6   1683     bsf     0x03, 0x5        	BANKSEL	r0x1017
+0001a7   0822     movf    0x22, 0x0        	MOVF	r0x1017,W
+0001a8   00ff     movwf   0x7f             	MOVWF	STK00
+0001a9   0823     movf    0x23, 0x0        	MOVF	r0x1016,W
+                                           	PAGESEL	_led_display
+0001aa   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	71; "labo1.c"	delay(time);
+0001ab   300a     movlw   0x0a             	MOVLW	0x0a
+0001ac   00ff     movwf   0x7f             	MOVWF	STK00
+0001ad   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+0001ae   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	72; "labo1.c"	led_display(numero2, 1);
+0001af   3001     movlw   0x01             	MOVLW	0x01
+0001b0   00fd     movwf   0x7d             	MOVWF	STK02
+0001b1   3000     movlw   0x00             	MOVLW	0x00
+0001b2   00fe     movwf   0x7e             	MOVWF	STK01
+0001b3   1683     bsf     0x03, 0x5        	BANKSEL	r0x1019
+0001b4   0824     movf    0x24, 0x0        	MOVF	r0x1019,W
+0001b5   00ff     movwf   0x7f             	MOVWF	STK00
+0001b6   0825     movf    0x25, 0x0        	MOVF	r0x1018,W
+                                           	PAGESEL	_led_display
+0001b7   2002     call    0x0002           	CALL	_led_display
+                                           	PAGESEL	$
+                                           ;	.line	73; "labo1.c"	delay(time);
+0001b8   300a     movlw   0x0a             	MOVLW	0x0a
+0001b9   00ff     movwf   0x7f             	MOVWF	STK00
+0001ba   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+0001bb   23f2     call    0x03f2           	CALL	_delay
+                                           	PAGESEL	$
+0001bc   299f     goto    0x019f           	GOTO	_00107_DS_
+                                           ;	.line	79; "labo1.c"	}
+0001bd   0008     return                   	RETURN	
+                                           ; exit point of _main
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;9 compiler assigned registers:
+                                           ;   r0x1002
+                                           ;   STK00
+                                           ;   r0x1003
+                                           ;   r0x1004
+                                           ;   r0x1005
+                                           ;   r0x1006
+                                           ;   r0x1007
+                                           ;   r0x1008
+                                           ;   r0x1009
+                                           ;; Starting pCode block
+                                           S_labo1__delay	code
+                                           _delay:
+                                           ; 2 exit points
+                                           ;	.line	143; "labo1.c"	void delay(unsigned int tiempo)
+0003f2   1683     bsf     0x03, 0x5        	BANKSEL	r0x1002
+0003f3   00b0     movwf   0x30             	MOVWF	r0x1002
+0003f4   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+0003f5   00af     movwf   0x2f             	MOVWF	r0x1003
+                                           ;	.line	148; "labo1.c"	for(i=0;i<tiempo;i++)
+0003f6   01b1     clrf    0x31             	CLRF	r0x1004
+0003f7   01b2     clrf    0x32             	CLRF	r0x1005
+                                           _00190_DS_:
+0003f8   1683     bsf     0x03, 0x5        	BANKSEL	r0x1002
+0003f9   0830     movf    0x30, 0x0        	MOVF	r0x1002,W
+0003fa   0232     subwf   0x32, 0x0        	SUBWF	r0x1005,W
+0003fb   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0003fc   2bff     goto    0x03ff           	GOTO	_00211_DS_
+0003fd   082f     movf    0x2f, 0x0        	MOVF	r0x1003,W
+0003fe   0231     subwf   0x31, 0x0        	SUBWF	r0x1004,W
+                                           _00211_DS_:
+0003ff   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000400   2c1c     goto    0x041c           	GOTO	_00192_DS_
+                                           ;;genSkipc:3307: created from rifx:0x7ffefd6b4c90
+                                           ;	.line	149; "labo1.c"	for(j=0;j<1275;j++);
+000401   30fb     movlw   0xfb             	MOVLW	0xfb
+000402   1683     bsf     0x03, 0x5        	BANKSEL	r0x1006
+000403   00b3     movwf   0x33             	MOVWF	r0x1006
+000404   3004     movlw   0x04             	MOVLW	0x04
+000405   00b4     movwf   0x34             	MOVWF	r0x1007
+                                           _00188_DS_:
+000406   30ff     movlw   0xff             	MOVLW	0xff
+000407   1683     bsf     0x03, 0x5        	BANKSEL	r0x1006
+000408   0733     addwf   0x33, 0x0        	ADDWF	r0x1006,W
+000409   00b5     movwf   0x35             	MOVWF	r0x1008
+00040a   30ff     movlw   0xff             	MOVLW	0xff
+00040b   00b6     movwf   0x36             	MOVWF	r0x1009
+00040c   0834     movf    0x34, 0x0        	MOVF	r0x1007,W
+00040d   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+00040e   0f34     incfsz  0x34, 0x0        	INCFSZ	r0x1007,W
+00040f   07b6     addwf   0x36, 0x1        	ADDWF	r0x1009,F
+000410   0835     movf    0x35, 0x0        	MOVF	r0x1008,W
+000411   00b3     movwf   0x33             	MOVWF	r0x1006
+000412   0836     movf    0x36, 0x0        	MOVF	r0x1009,W
+000413   00b4     movwf   0x34             	MOVWF	r0x1007
+000414   0836     movf    0x36, 0x0        	MOVF	r0x1009,W
+000415   0435     iorwf   0x35, 0x0        	IORWF	r0x1008,W
+000416   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000417   2c06     goto    0x0406           	GOTO	_00188_DS_
+                                           ;	.line	148; "labo1.c"	for(i=0;i<tiempo;i++)
+000418   0ab1     incf    0x31, 0x1        	INCF	r0x1004,F
+000419   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+00041a   0ab2     incf    0x32, 0x1        	INCF	r0x1005,F
+00041b   2bf8     goto    0x03f8           	GOTO	_00190_DS_
+                                           _00192_DS_:
+                                           ;	.line	150; "labo1.c"	}
+00041c   0008     return                   	RETURN	
+                                           ; exit point of _delay
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;7 compiler assigned registers:
+                                           ;   r0x100A
+                                           ;   STK00
+                                           ;   r0x100B
+                                           ;   STK01
+                                           ;   r0x100C
+                                           ;   STK02
+                                           ;   r0x100D
+                                           ;; Starting pCode block
+                                           S_labo1__led_display	code
+                                           _led_display:
+                                           ; 2 exit points
+                                           ;	.line	93; "labo1.c"	void led_display(int valor, int display)
+000002   1683     bsf     0x03, 0x5        	BANKSEL	r0x100A
+000003   00ad     movwf   0x2d             	MOVWF	r0x100A
+000004   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000005   00ac     movwf   0x2c             	MOVWF	r0x100B
+000006   087e     movf    0x7e, 0x0        	MOVF	STK01,W
+000007   00ae     movwf   0x2e             	MOVWF	r0x100C
+000008   087d     movf    0x7d, 0x0        	MOVF	STK02,W
+                                           ;;1	MOVWF	r0x100D
+                                           ;	.line	95; "labo1.c"	if (display == 0)
+000009   042e     iorwf   0x2e, 0x0        	IORWF	r0x100C,W
+00000a   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00000b   287f     goto    0x007f           	GOTO	_00177_DS_
+                                           ;	.line	97; "labo1.c"	if (valor == 0) GPIO = 0b00000000;
+00000c   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+00000d   042c     iorwf   0x2c, 0x0        	IORWF	r0x100B,W
+00000e   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00000f   2813     goto    0x0013           	GOTO	_00147_DS_
+000010   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000011   0185     clrf    0x05             	CLRF	_GPIO
+000012   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00147_DS_:
+                                           ;	.line	99; "labo1.c"	else if (valor == 1) GPIO = 0b00000001; 
+000013   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+000014   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+000015   3a01     xorlw   0x01             	XORLW	0x01
+000016   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000017   2820     goto    0x0020           	GOTO	_00144_DS_
+000018   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+000019   3a00     xorlw   0x00             	XORLW	0x00
+00001a   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00001b   2820     goto    0x0020           	GOTO	_00144_DS_
+00001c   3001     movlw   0x01             	MOVLW	0x01
+00001d   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00001e   0085     movwf   0x05             	MOVWF	_GPIO
+00001f   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00144_DS_:
+                                           ;	.line	101; "labo1.c"	else if (valor == 2) GPIO = 0b00000010; 
+000020   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+000021   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+000022   3a02     xorlw   0x02             	XORLW	0x02
+000023   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000024   282d     goto    0x002d           	GOTO	_00141_DS_
+000025   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+000026   3a00     xorlw   0x00             	XORLW	0x00
+000027   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000028   282d     goto    0x002d           	GOTO	_00141_DS_
+000029   3002     movlw   0x02             	MOVLW	0x02
+00002a   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00002b   0085     movwf   0x05             	MOVWF	_GPIO
+00002c   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00141_DS_:
+                                           ;	.line	103; "labo1.c"	else if (valor == 3) GPIO = 0b00000011;
+00002d   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+00002e   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+00002f   3a03     xorlw   0x03             	XORLW	0x03
+000030   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000031   283a     goto    0x003a           	GOTO	_00138_DS_
+000032   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+000033   3a00     xorlw   0x00             	XORLW	0x00
+000034   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000035   283a     goto    0x003a           	GOTO	_00138_DS_
+000036   3003     movlw   0x03             	MOVLW	0x03
+000037   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000038   0085     movwf   0x05             	MOVWF	_GPIO
+000039   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00138_DS_:
+                                           ;	.line	105; "labo1.c"	else if (valor == 4) GPIO = 0b00000100;
+00003a   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+00003b   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+00003c   3a04     xorlw   0x04             	XORLW	0x04
+00003d   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00003e   2847     goto    0x0047           	GOTO	_00135_DS_
+00003f   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+000040   3a00     xorlw   0x00             	XORLW	0x00
+000041   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000042   2847     goto    0x0047           	GOTO	_00135_DS_
+000043   3004     movlw   0x04             	MOVLW	0x04
+000044   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000045   0085     movwf   0x05             	MOVWF	_GPIO
+000046   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00135_DS_:
+                                           ;	.line	107; "labo1.c"	else if (valor == 5) GPIO = 0b00000101;
+000047   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+000048   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+000049   3a05     xorlw   0x05             	XORLW	0x05
+00004a   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00004b   2854     goto    0x0054           	GOTO	_00132_DS_
+00004c   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+00004d   3a00     xorlw   0x00             	XORLW	0x00
+00004e   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00004f   2854     goto    0x0054           	GOTO	_00132_DS_
+000050   3005     movlw   0x05             	MOVLW	0x05
+000051   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000052   0085     movwf   0x05             	MOVWF	_GPIO
+000053   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00132_DS_:
+                                           ;	.line	109; "labo1.c"	else if (valor == 6) GPIO = 0b00000110;
+000054   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+000055   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+000056   3a06     xorlw   0x06             	XORLW	0x06
+000057   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000058   2861     goto    0x0061           	GOTO	_00129_DS_
+000059   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+00005a   3a00     xorlw   0x00             	XORLW	0x00
+00005b   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00005c   2861     goto    0x0061           	GOTO	_00129_DS_
+00005d   3006     movlw   0x06             	MOVLW	0x06
+00005e   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00005f   0085     movwf   0x05             	MOVWF	_GPIO
+000060   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00129_DS_:
+                                           ;	.line	111; "labo1.c"	else if (valor == 7) GPIO = 0b00000111;
+000061   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+000062   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+000063   3a07     xorlw   0x07             	XORLW	0x07
+000064   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000065   286e     goto    0x006e           	GOTO	_00126_DS_
+000066   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+000067   3a00     xorlw   0x00             	XORLW	0x00
+000068   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000069   286e     goto    0x006e           	GOTO	_00126_DS_
+00006a   3007     movlw   0x07             	MOVLW	0x07
+00006b   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00006c   0085     movwf   0x05             	MOVWF	_GPIO
+00006d   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00126_DS_:
+                                           ;	.line	113; "labo1.c"	else if (valor == 8) GPIO = 0b00010000;
+00006e   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+00006f   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+000070   3a08     xorlw   0x08             	XORLW	0x08
+000071   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000072   287b     goto    0x007b           	GOTO	_00123_DS_
+000073   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+000074   3a00     xorlw   0x00             	XORLW	0x00
+000075   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000076   287b     goto    0x007b           	GOTO	_00123_DS_
+000077   3010     movlw   0x10             	MOVLW	0x10
+000078   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000079   0085     movwf   0x05             	MOVWF	_GPIO
+00007a   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00123_DS_:
+                                           ;	.line	115; "labo1.c"	else GPIO = 0b00010001;
+00007b   3011     movlw   0x11             	MOVLW	0x11
+00007c   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00007d   0085     movwf   0x05             	MOVWF	_GPIO
+00007e   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00177_DS_:
+                                           ;	.line	120; "labo1.c"	if (valor == 0) GPIO = 0b00100000;
+00007f   1683     bsf     0x03, 0x5        	BANKSEL	r0x100A
+000080   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+000081   042c     iorwf   0x2c, 0x0        	IORWF	r0x100B,W
+000082   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000083   2888     goto    0x0088           	GOTO	_00174_DS_
+000084   3020     movlw   0x20             	MOVLW	0x20
+000085   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000086   0085     movwf   0x05             	MOVWF	_GPIO
+000087   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00174_DS_:
+                                           ;	.line	122; "labo1.c"	else if (valor == 1) GPIO = 0b00100001; 
+000088   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+000089   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+00008a   3a01     xorlw   0x01             	XORLW	0x01
+00008b   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00008c   2895     goto    0x0095           	GOTO	_00171_DS_
+00008d   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+00008e   3a00     xorlw   0x00             	XORLW	0x00
+00008f   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000090   2895     goto    0x0095           	GOTO	_00171_DS_
+000091   3021     movlw   0x21             	MOVLW	0x21
+000092   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000093   0085     movwf   0x05             	MOVWF	_GPIO
+000094   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00171_DS_:
+                                           ;	.line	124; "labo1.c"	else if (valor == 2) GPIO = 0b00100010; 
+000095   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+000096   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+000097   3a02     xorlw   0x02             	XORLW	0x02
+000098   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000099   28a2     goto    0x00a2           	GOTO	_00168_DS_
+00009a   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+00009b   3a00     xorlw   0x00             	XORLW	0x00
+00009c   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00009d   28a2     goto    0x00a2           	GOTO	_00168_DS_
+00009e   3022     movlw   0x22             	MOVLW	0x22
+00009f   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000a0   0085     movwf   0x05             	MOVWF	_GPIO
+0000a1   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00168_DS_:
+                                           ;	.line	126; "labo1.c"	else if (valor == 3) GPIO = 0b00100011;
+0000a2   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+0000a3   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+0000a4   3a03     xorlw   0x03             	XORLW	0x03
+0000a5   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000a6   28af     goto    0x00af           	GOTO	_00165_DS_
+0000a7   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+0000a8   3a00     xorlw   0x00             	XORLW	0x00
+0000a9   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000aa   28af     goto    0x00af           	GOTO	_00165_DS_
+0000ab   3023     movlw   0x23             	MOVLW	0x23
+0000ac   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000ad   0085     movwf   0x05             	MOVWF	_GPIO
+0000ae   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00165_DS_:
+                                           ;	.line	128; "labo1.c"	else if (valor == 4) GPIO = 0b00100100;
+0000af   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+0000b0   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+0000b1   3a04     xorlw   0x04             	XORLW	0x04
+0000b2   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000b3   28bc     goto    0x00bc           	GOTO	_00162_DS_
+0000b4   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+0000b5   3a00     xorlw   0x00             	XORLW	0x00
+0000b6   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000b7   28bc     goto    0x00bc           	GOTO	_00162_DS_
+0000b8   3024     movlw   0x24             	MOVLW	0x24
+0000b9   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000ba   0085     movwf   0x05             	MOVWF	_GPIO
+0000bb   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00162_DS_:
+                                           ;	.line	130; "labo1.c"	else if (valor == 5) GPIO = 0b00100101;
+0000bc   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+0000bd   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+0000be   3a05     xorlw   0x05             	XORLW	0x05
+0000bf   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000c0   28c9     goto    0x00c9           	GOTO	_00159_DS_
+0000c1   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+0000c2   3a00     xorlw   0x00             	XORLW	0x00
+0000c3   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000c4   28c9     goto    0x00c9           	GOTO	_00159_DS_
+0000c5   3025     movlw   0x25             	MOVLW	0x25
+0000c6   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000c7   0085     movwf   0x05             	MOVWF	_GPIO
+0000c8   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00159_DS_:
+                                           ;	.line	132; "labo1.c"	else if (valor == 6) GPIO = 0b00100110;
+0000c9   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+0000ca   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+0000cb   3a06     xorlw   0x06             	XORLW	0x06
+0000cc   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000cd   28d6     goto    0x00d6           	GOTO	_00156_DS_
+0000ce   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+0000cf   3a00     xorlw   0x00             	XORLW	0x00
+0000d0   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000d1   28d6     goto    0x00d6           	GOTO	_00156_DS_
+0000d2   3026     movlw   0x26             	MOVLW	0x26
+0000d3   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000d4   0085     movwf   0x05             	MOVWF	_GPIO
+0000d5   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00156_DS_:
+                                           ;	.line	134; "labo1.c"	else if (valor == 7) GPIO = 0b00100111;
+0000d6   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+0000d7   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+0000d8   3a07     xorlw   0x07             	XORLW	0x07
+0000d9   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000da   28e3     goto    0x00e3           	GOTO	_00153_DS_
+0000db   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+0000dc   3a00     xorlw   0x00             	XORLW	0x00
+0000dd   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000de   28e3     goto    0x00e3           	GOTO	_00153_DS_
+0000df   3027     movlw   0x27             	MOVLW	0x27
+0000e0   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000e1   0085     movwf   0x05             	MOVWF	_GPIO
+0000e2   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00153_DS_:
+                                           ;	.line	136; "labo1.c"	else if (valor == 8) GPIO = 0b00110000;
+0000e3   1683     bsf     0x03, 0x5        	BANKSEL	r0x100B
+0000e4   082c     movf    0x2c, 0x0        	MOVF	r0x100B,W
+0000e5   3a08     xorlw   0x08             	XORLW	0x08
+0000e6   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000e7   28f0     goto    0x00f0           	GOTO	_00150_DS_
+0000e8   082d     movf    0x2d, 0x0        	MOVF	r0x100A,W
+0000e9   3a00     xorlw   0x00             	XORLW	0x00
+0000ea   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000eb   28f0     goto    0x00f0           	GOTO	_00150_DS_
+0000ec   3030     movlw   0x30             	MOVLW	0x30
+0000ed   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000ee   0085     movwf   0x05             	MOVWF	_GPIO
+0000ef   28f3     goto    0x00f3           	GOTO	_00179_DS_
+                                           _00150_DS_:
+                                           ;	.line	138; "labo1.c"	else GPIO = 0b00110001;
+0000f0   3031     movlw   0x31             	MOVLW	0x31
+0000f1   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0000f2   0085     movwf   0x05             	MOVWF	_GPIO
+                                           _00179_DS_:
+                                           ;	.line	140; "labo1.c"	}
+0000f3   0008     return                   	RETURN	
+                                           ; exit point of _led_display
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   __mulint
+                                           ;   __divuint
+                                           ;   __moduint
+                                           ;   __moduint
+                                           ;   __mulint
+                                           ;   __divuint
+                                           ;   __moduint
+                                           ;   __moduint
+                                           ;9 compiler assigned registers:
+                                           ;   r0x100E
+                                           ;   STK00
+                                           ;   r0x100F
+                                           ;   STK01
+                                           ;   r0x1010
+                                           ;   STK02
+                                           ;   r0x1011
+                                           ;   r0x1012
+                                           ;   r0x1013
+                                           ;; Starting pCode block
+                                           S_labo1__get_rand	code
+                                           _get_rand:
+                                           ; 2 exit points
+                                           ;	.line	82; "labo1.c"	unsigned int get_rand(unsigned int min, unsigned int max)
+0002de   1683     bsf     0x03, 0x5        	BANKSEL	r0x100E
+0002df   00a7     movwf   0x27             	MOVWF	r0x100E
+0002e0   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+0002e1   00a6     movwf   0x26             	MOVWF	r0x100F
+0002e2   087e     movf    0x7e, 0x0        	MOVF	STK01,W
+0002e3   00a9     movwf   0x29             	MOVWF	r0x1010
+0002e4   087d     movf    0x7d, 0x0        	MOVF	STK02,W
+0002e5   00a8     movwf   0x28             	MOVWF	r0x1011
+                                           ;	.line	86; "labo1.c"	rand += ((rand * rand) /100) % 10000;
+0002e6   1283     bcf     0x03, 0x5        	BANKSEL	_get_rand_rand_65536_54
+0002e7   0844     movf    0x44, 0x0        	MOVF	_get_rand_rand_65536_54,W
+0002e8   00fd     movwf   0x7d             	MOVWF	STK02
+0002e9   0845     movf    0x45, 0x0        	MOVF	(_get_rand_rand_65536_54 + 1),W
+0002ea   00fe     movwf   0x7e             	MOVWF	STK01
+0002eb   0844     movf    0x44, 0x0        	MOVF	_get_rand_rand_65536_54,W
+0002ec   00ff     movwf   0x7f             	MOVWF	STK00
+0002ed   0845     movf    0x45, 0x0        	MOVF	(_get_rand_rand_65536_54 + 1),W
+                                           	PAGESEL	__mulint
+0002ee   225a     call    0x025a           	CALL	__mulint
+                                           	PAGESEL	$
+0002ef   1683     bsf     0x03, 0x5        	BANKSEL	r0x1012
+0002f0   00ab     movwf   0x2b             	MOVWF	r0x1012
+0002f1   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+0002f2   00aa     movwf   0x2a             	MOVWF	r0x1013
+0002f3   3064     movlw   0x64             	MOVLW	0x64
+0002f4   00fd     movwf   0x7d             	MOVWF	STK02
+0002f5   3000     movlw   0x00             	MOVLW	0x00
+0002f6   00fe     movwf   0x7e             	MOVWF	STK01
+0002f7   082a     movf    0x2a, 0x0        	MOVF	r0x1013,W
+0002f8   00ff     movwf   0x7f             	MOVWF	STK00
+0002f9   082b     movf    0x2b, 0x0        	MOVF	r0x1012,W
+                                           	PAGESEL	__divuint
+0002fa   2384     call    0x0384           	CALL	__divuint
+                                           	PAGESEL	$
+0002fb   1683     bsf     0x03, 0x5        	BANKSEL	r0x1012
+0002fc   00ab     movwf   0x2b             	MOVWF	r0x1012
+0002fd   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+0002fe   00aa     movwf   0x2a             	MOVWF	r0x1013
+0002ff   3010     movlw   0x10             	MOVLW	0x10
+000300   00fd     movwf   0x7d             	MOVWF	STK02
+000301   3027     movlw   0x27             	MOVLW	0x27
+000302   00fe     movwf   0x7e             	MOVWF	STK01
+000303   082a     movf    0x2a, 0x0        	MOVF	r0x1013,W
+000304   00ff     movwf   0x7f             	MOVWF	STK00
+000305   082b     movf    0x2b, 0x0        	MOVF	r0x1012,W
+                                           	PAGESEL	__moduint
+000306   2337     call    0x0337           	CALL	__moduint
+                                           	PAGESEL	$
+000307   1683     bsf     0x03, 0x5        	BANKSEL	r0x1012
+000308   00ab     movwf   0x2b             	MOVWF	r0x1012
+000309   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+00030a   00aa     movwf   0x2a             	MOVWF	r0x1013
+00030b   1283     bcf     0x03, 0x5        	BANKSEL	_get_rand_rand_65536_54
+00030c   07c4     addwf   0x44, 0x1        	ADDWF	_get_rand_rand_65536_54,F
+00030d   1683     bsf     0x03, 0x5        	BANKSEL	r0x1012
+00030e   082b     movf    0x2b, 0x0        	MOVF	r0x1012,W
+00030f   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000310   0a2b     incf    0x2b, 0x0        	INCF	r0x1012,W
+000311   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+000312   2b15     goto    0x0315           	GOTO	_00001_DS_
+000313   1283     bcf     0x03, 0x5        	BANKSEL	_get_rand_rand_65536_54
+000314   07c5     addwf   0x45, 0x1        	ADDWF	(_get_rand_rand_65536_54 + 1),F
+                                           _00001_DS_:
+                                           ;	.line	88; "labo1.c"	return rand % (max+1-min)+min;
+000315   1683     bsf     0x03, 0x5        	BANKSEL	r0x1011
+000316   0aa8     incf    0x28, 0x1        	INCF	r0x1011,F
+000317   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+000318   0aa9     incf    0x29, 0x1        	INCF	r0x1010,F
+000319   0826     movf    0x26, 0x0        	MOVF	r0x100F,W
+00031a   02a8     subwf   0x28, 0x1        	SUBWF	r0x1011,F
+00031b   0827     movf    0x27, 0x0        	MOVF	r0x100E,W
+00031c   1c03     btfss   0x03, 0x0        	BTFSS	STATUS,0
+00031d   0f27     incfsz  0x27, 0x0        	INCFSZ	r0x100E,W
+00031e   02a9     subwf   0x29, 0x1        	SUBWF	r0x1010,F
+00031f   0828     movf    0x28, 0x0        	MOVF	r0x1011,W
+000320   00fd     movwf   0x7d             	MOVWF	STK02
+000321   0829     movf    0x29, 0x0        	MOVF	r0x1010,W
+000322   00fe     movwf   0x7e             	MOVWF	STK01
+000323   1283     bcf     0x03, 0x5        	BANKSEL	_get_rand_rand_65536_54
+000324   0844     movf    0x44, 0x0        	MOVF	_get_rand_rand_65536_54,W
+000325   00ff     movwf   0x7f             	MOVWF	STK00
+000326   0845     movf    0x45, 0x0        	MOVF	(_get_rand_rand_65536_54 + 1),W
+                                           	PAGESEL	__moduint
+000327   2337     call    0x0337           	CALL	__moduint
+                                           	PAGESEL	$
+000328   1683     bsf     0x03, 0x5        	BANKSEL	r0x1010
+000329   00a9     movwf   0x29             	MOVWF	r0x1010
+00032a   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+00032b   00a8     movwf   0x28             	MOVWF	r0x1011
+00032c   0826     movf    0x26, 0x0        	MOVF	r0x100F,W
+00032d   0728     addwf   0x28, 0x0        	ADDWF	r0x1011,W
+00032e   00a6     movwf   0x26             	MOVWF	r0x100F
+00032f   0829     movf    0x29, 0x0        	MOVF	r0x1010,W
+000330   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000331   0f29     incfsz  0x29, 0x0        	INCFSZ	r0x1010,W
+000332   07a7     addwf   0x27, 0x1        	ADDWF	r0x100E,F
+000333   0826     movf    0x26, 0x0        	MOVF	r0x100F,W
+000334   00ff     movwf   0x7f             	MOVWF	STK00
+000335   0827     movf    0x27, 0x0        	MOVF	r0x100E,W
+                                           ;	.line	90; "labo1.c"	}
+000336   0008     return                   	RETURN	
+                                           ; exit point of _get_rand
+                                           
+                                           
+                                           ;	code size estimation:
+                                           ;	  511+  125 =   636 instructions ( 1522 byte)
+                                           
+                                           	end
