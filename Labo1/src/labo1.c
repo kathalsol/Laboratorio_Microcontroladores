@@ -1,6 +1,4 @@
 #include <pic14/pic12f683.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 /* Configuración de registro CONFIG, se desabilita el WDT y
 el inicio por defecto de GP3 como MCLRE(RESET)*/
