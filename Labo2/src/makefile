@@ -1,17 +1,17 @@
-FAMILY=-mpic14
-MCU=-p12f683
-CC=sdcc
-LD=sdcc
-CFLAGS=-I. -I/usr/local/share/sdcc/non-free/include
-TARGET=labo2
-
+MCU=attiny4313
+F_CPU=1000000
+CC=avr-gcc
+OBJCOPY=avr-objcopy
+CFLAGS=-std=c99 -Wall -g -Os -mmcu=${MCU} -DF_CPU=${F_CPU} -I.
+TARGET=main
 SRCS = labo2.c
 
 all:
-	${CC} --use-non-free ${FAMILY} ${MCU} ${CFLAGS} -o ${TARGET} ${SRCS}
-#	${LD} -o ${TARGET}.elf ${TARGET}.o
-#	${OBJCOPY} -j .text -j .data -O ihex ${TARGET}.o ${TARGET}.hex
-#	${SIZE} -C --mcu=${MCU} ${TARGET}.elf
+	${CC} ${CFLAGS} -o ${TARGET}.bin ${SRCS}
+	${OBJCOPY} -j .text -j .data -O ihex ${TARGET}.bin ${TARGET}.hex
+
+flash:
+	avrdude -p ${MCU} -c usbasp -U flash:w:${TARGET}.hex:i -F -P usb
 
 clean:
-	rm -f *.c~ *.h~ *.o *.elf *.hex *.asm
+	rm -f *.bin *.hex
