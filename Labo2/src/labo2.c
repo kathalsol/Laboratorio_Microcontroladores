@@ -13,7 +13,7 @@
 #include <stdio.h>
 
 /* Se definen las varibles para las 3 interrupciones*/
-int counter, enable, state, wash_state;
+int counter, enable, state, wash_state, next_wash_state, load_state;
 int time_delay = 100;
 
 // Definición de estados
@@ -42,47 +42,110 @@ int time_delay = 100;
 
 #define finish 10  // fin del ciclo de lavado
 
+//Declaracion de funciones
+void setup();
+void delay(int time_delay);
+void green_light(int time_delay);
+void yellow_light(int time_delay);
+void red_light(int time_delay);
+void green_light_load(int time_delay);
+void yellow_light_load(int time_delay);
+void red_light_load(int time_delay);
+
 
 int main(void)
 {
     setup();
 
 	char state = waiting_user_input;
-	char next_state = waiting_user_input;
-	char load=waiting_user_input;
+	char wash_state = waiting_user_input;
+	char load_state=waiting_user_input;
+	char next_wash_state = waiting_user_input;
 	while(1){
-		state = next_state;
-		switch(state){
-			case(start_wash):
-				switch(load){
-					case(low_load):
-						green_light_load(time_delay);
-						switch(wash_state){
-							case suministro_agua:
-								green_light(time_delay);
-								next_state = lavar;
-							break;
-							case lavar:
-							break;
-							case enjuagar:
-							break;
-							case centrifugar:
-							break;
-						}
-					break;
+		switch(load_state){
+			case(low_load):
+				green_light_load(time_delay);
 
-					case(medium_load):
-						yellow_light_load(time_delay);
+			break;
+			case(medium_load):
+				yellow_light_load(time_delay);
+		
+			break;
+			case(high_load):
+				red_light_load(time_delay);
 
-					
-					break;
-					case(high_load):
-						red_light_load(time_delay);
+			break;
+		}
 
-					break;
-						
+		switch(wash_state){
+			case(suministro_agua):
+				if(load_state == low_load){
+					//Definen valores de los tiempos
 				}
+				else if(load_state == medium_load){
 
+				}
+				else if(load_state == high_load){
+
+				}
+			break;
+			case(lavar):
+				if(load_state == low_load){
+					
+				}
+				else if(load_state == medium_load){
+
+				}
+				else if(load_state == high_load){
+
+				}
+			break;
+			case(enjuagar):
+				if(load_state == low_load){
+					
+				}
+				else if(load_state == medium_load){
+
+				}
+				else if(load_state == high_load){
+
+				}
+			break;
+			case(centrifugar):
+					if(load_state == low_load){
+						
+					}
+					else if(load_state == medium_load){
+
+					}
+					else if(load_state == high_load){
+
+					}
+			break;
+			case(finish):
+			break;
+		}
+
+		switch(state){
+			wash_state = next_wash_state;
+			case(start_wash):
+				wash_state = suministro_agua;
+				if(wash_state == suministro_agua){
+					next_wash_state = lavar;
+				}
+				else if(wash_state == lavar){
+					next_wash_state = enjuagar;
+				}
+				else if(wash_state == enjuagar){
+					next_wash_state = centrifugar;
+				}
+				else if(wash_state == centrifugar){
+					next_wash_state = finish;
+				}
+				else{
+					state = start_wash;
+				}
+			break;
 			case(stop_wash):
 			break;
 		}
@@ -91,31 +154,29 @@ int main(void)
 		
 }
 
-
-ISR(PCINT11_vect) {
-    // Actualizar el estado de la lavadora en inicio
-    state = start_wash;
+ISR(PCINT1_vect) 
+{
+	if(bit_is_set(PINA, PA0)){
+		state = start_wash;
+	}
+	if(bit_is_set(PINA, PA1)){
+		state = stop_wash;
+	}
 }
 
-ISR(PCINT13_vect) {
-    // Actualizar el estado de la lavadora en función de la intensidad I_BAJA
-    state = low_load;
+ISR(PCINT0_vect) 
+{
+	if (bit_is_set(PINB, PB0)) {
+		load_state = low_load;
+	}
+	if (bit_is_set(PINB, PB1)) {
+		load_state = medium_load;
+	}
+	if (bit_is_set(PINB, PB2)) {
+		load_state = high_load;
+	}
 }
 
-ISR(PCINT14_vect) {
-    // Actualizar el estado de la lavadora en función de la intensidad I_MEDIA
-    state = medium_load;
-}
-
-ISR(PCINT15_vect) {
-    // Actualizar el estado de la lavadora en función de la intensidad I_ALTA
-    state = high_load;
-}
-
-ISR(PCINT17_vect) {
-    // Actualizar estado para detener lavado
-    state = stop_wash;
-}
 
 void setup()
 /* Definición de entradas y salidas
@@ -134,10 +195,12 @@ void setup()
     DDRB = 0b11111111; 
 	DDRD = 0b0111000;
 	DDRA = 0b000;
+	
 
-	PCMSK0 |= (1 << PCINT0) | (1 << PCINT1) | (1 << PCINT2); // Interrupciones de los niveles de carga
+	PCMSK |= (1 << PCINT0) | (1 << PCINT1) | (1 << PCINT2); // Interrupciones de los niveles de carga
     PCMSK1 |= (1 << PCINT8) | (1 << PCINT9); // Boton inicio/pausa (mas prioridad)
 	
+	// Habilitar interrupciones globales
     sei();
 }
 
@@ -147,7 +210,7 @@ void delay(int time_delay){
 	counter = 0;
 	TCNT0= 0x00;
 	while(counter <= time_delay){
-		PORTB &= 0xFF;
+		PORTD &= 0xFF;
 	}
 	// Volvemos las variables al valor inicial
 	TIMSK = 0b00;
@@ -157,7 +220,7 @@ void delay(int time_delay){
 /* Definición de led individuales que indican
 el estado en el ciclo de trabajo de la lavadora:
 suministro de agua, lavar, enjuagar y centrifugar
-*/
+
 void green_light(int time_delay){
     PORTB = 0b00000001;
     delay(200);
@@ -185,29 +248,30 @@ void blue_light(int time_delay){
     PORTB = 0b00000000; // Lo dejamos en bajo
     delay(200);
 }
+*/
 
 /* Definición de leds individuales para indicar
 el nivel de carga 
 */
 
 void green_light_load(int time_delay){
-    PORTD = 0b0000001;
+    PORTD = 0b0001000;
     delay(200);
     PORTD = 0b0000000; // Lo dejamos en bajo
 	delay(200);
 }
 
 void yellow_light_load(int time_delay){
-    PORTD = 0b0000010;
+    PORTD = 0b0010000;
     delay(200);
     PORTD = 0b0000000; // Lo dejamos en bajo
     delay(200);
 }
 
 void red_light_load(int time_delay){
-    PORTA = 0b010;
+    PORTD = 0b0100000;
     delay(200);
-    PORTA = 0b000; // Lo dejamos en bajo
+    PORTD = 0b0000000;// Lo dejamos en bajo
     delay(200);
 }
 
