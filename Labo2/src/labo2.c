@@ -61,11 +61,13 @@ int main(void)
 							case suministro_agua:
 								green_light(time_delay);
 								next_state = lavar;
+							break;
 							case lavar:
-
+							break;
 							case enjuagar:
-							
+							break;
 							case centrifugar:
+							break;
 						}
 					break;
 
@@ -116,32 +118,25 @@ ISR(PCINT17_vect) {
 }
 
 void setup()
-{
-    // Definición de salidas
-
-	/*
-	DDRB = Port B Data Direction Register 8 bits
+/* Definición de entradas y salidas
+   - DDRB: Port B Data Direction Register 8 bits
 	Configuracion del puerto B: Todos como salidas
 	Puertos B0,B1,B2 y B3 *(LEDS)y los leds B7 B6 B5 B4 (Para el decodificador)
-	*/
-    DDRB = 0b11111111;
-
-	/*
-	DDRD = Port D Data Direction Register 7 bits
+   - DDRD: Port D Data Direction Register 7 bits
 	Salidas puertos D1 y D5, D0 como entrada
-	*/ 
-	DDRD = 0b0010010;
+   - DDRA: Port A Data Register 3 bits
+	A1 y A0 como salida
+   - PCMSK0 y PCMSK1 : Pin change mask register 0 and 1
+	Utilizados para definir en que puertos I/O estan las interrupciones
+	D2, D3 Y D4, además de D0 y D6
+*/
+{
+    DDRB = 0b11111111; 
+	DDRD = 0b0111000;
+	DDRA = 0b000;
 
-	/*
-	DDRA = Port A Data Register 3 bits
-	*/
-	DDRA = 0b011; // A1 como salida
-
-	/*Entradas con interrupciones corresponden a puertos D2, D3 Y D4*/
-
-	PCMSK0 |= (1 << PCINT13) | (1 << PCINT14) | (1 << PCINT15); // Interrupciones de los niveles de carga
-	
-    PCMSK1 |= (1 << PCINT11) | (1 << PCINT17); // Boton inicio/pausa (mas prioridad)
+	PCMSK0 |= (1 << PCINT0) | (1 << PCINT1) | (1 << PCINT2); // Interrupciones de los niveles de carga
+    PCMSK1 |= (1 << PCINT8) | (1 << PCINT9); // Boton inicio/pausa (mas prioridad)
 	
     sei();
 }
