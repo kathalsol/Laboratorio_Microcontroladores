@@ -28,11 +28,11 @@ int time_delay = 100;
 #define suministro_agua 0 // primer paso del lavado, enciende led correspondiente 
 						  // y pasa el tiempo en el display
 
-#define lavar 0// segundo paso, enciende led correspondiente y pasa tiempo en el display
+#define lavar 0 // segundo paso, enciende led correspondiente y pasa tiempo en el display
 
-#define enjuagar 0// tercer paso, enciende led correspondiente y pasa tiempo en el display
+#define enjuagar 0 // tercer paso, enciende led correspondiente y pasa tiempo en el display
 
-#define centrifugar 0// cuarto paso, enciende led correspondiente y pasa tiempo en el display
+#define centrifugar 0 // cuarto paso, enciende led correspondiente y pasa tiempo en el display
 
 #define checking 0   // revisión de que haya pasado por los 4 estados de lavado:
 					 // tiene que encenderse los cuatro leds correspondientes
