@@ -59,7 +59,7 @@ int main(void)
 
 	char state = waiting_user_input;
 	char wash_state = waiting_user_input;
-	char load_state=waiting_user_input;
+	char load_state= waiting_user_input;
 	char next_wash_state = waiting_user_input;
 	while(1){
 		switch(load_state){
@@ -154,20 +154,24 @@ int main(void)
 		
 }
 
-ISR(PCINT1_vect) 
+ISR(INT0_vect) //Boton pausa
 {
-	if(bit_is_set(PINA, PA0)){
-		state = start_wash;
-	}
-	if(bit_is_set(PINA, PA1)){
-		state = stop_wash;
-	}
+
+	state = stop_wash;
 }
+
+ISR(INT1_vect) //Boton start
+{
+
+	state = start_wash;
+}
+
 
 ISR(PCINT0_vect) 
 {
 	if (bit_is_set(PINB, PB0)) {
 		load_state = low_load;
+		green_light_load(time_delay);
 	}
 	if (bit_is_set(PINB, PB1)) {
 		load_state = medium_load;
@@ -195,10 +199,14 @@ void setup()
     DDRB = 0b11111111; 
 	DDRD = 0b0111000;
 	DDRA = 0b000;
-	
+
+	// configurar GIMSK 
+	GIMSK |= (1<<PCIE0) | (1 << INT0) | (1 << INT1);
+
+	//Configurar INT0 e INT1 por flanco positivo EICRA (deafult positivo creo)
 
 	PCMSK |= (1 << PCINT0) | (1 << PCINT1) | (1 << PCINT2); // Interrupciones de los niveles de carga
-    PCMSK1 |= (1 << PCINT8) | (1 << PCINT9); // Boton inicio/pausa (mas prioridad)
+    
 	
 	// Habilitar interrupciones globales
     sei();
