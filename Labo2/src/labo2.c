@@ -14,7 +14,7 @@
 
 /* Se definen las varibles para las 3 interrupciones*/
 int counter, enable, state, wash_state, next_wash_state, load_state;
-int time_delay = 100;
+int time_delay = 1000;
 
 // Definición de estados
 
@@ -57,10 +57,10 @@ int main(void)
 {
     setup();
 
-	char state = waiting_user_input;
-	char wash_state = waiting_user_input;
+	//char state = waiting_user_input;
+	//char wash_state = waiting_user_input;
 	char load_state= waiting_user_input;
-	char next_wash_state = waiting_user_input;
+	//char next_wash_state = waiting_user_input;
 	while(1){
 		switch(load_state){
 			case(low_load):
@@ -75,8 +75,12 @@ int main(void)
 				red_light_load(time_delay);
 
 			break;
-		}
 
+			default: 
+				next_wash_state = waiting_user_input;
+			break;
+		}
+	/*
 		switch(wash_state){
 			case(suministro_agua):
 				if(load_state == low_load){
@@ -149,20 +153,18 @@ int main(void)
 			case(stop_wash):
 			break;
 		}
-
+*/
 	}
 		
 }
 
 ISR(INT0_vect) //Boton pausa
 {
-
 	state = stop_wash;
 }
 
 ISR(INT1_vect) //Boton start
 {
-
 	state = start_wash;
 }
 
@@ -172,9 +174,11 @@ ISR(PCINT0_vect) {
 
 }
 ISR(PCINT1_vect) {
+	//Interupcion carga baja
 	state = medium_load;
 }
 ISR(PCINT2_vect) {
+	//Interupcion carga baja
 	state = high_load;
 } 
 
@@ -206,22 +210,47 @@ void setup()
 	D2, D3 Y D4, además de D0 y D6
 */
 {
-    DDRB = 0b11111111; 
-	DDRD = 0b0111000;
-	DDRA = 0b000;
+    DDRB = 0b11111110; 
+	DDRD = 0b0000011;
+	DDRA = 0b010;
 
-	// configurar GIMSK 
-	GIMSK |= (1<<PCIE0) | (1 << INT0) | (1 << INT1);
+	//Configurar GIMSK para activar interupciones
+	GIMSK |= (1<<PCIE0) | (1<<PCIE0) | (1<<PCIE2); //Interupciones de los botones de carga
+	GIMSK |= (1 << INT0) | (1 << INT1); // Interrupcion de inicio y final
 
 	//Configurar INT0 e INT1 por flanco positivo EICRA (deafult positivo creo)
 
-	PCMSK |= (1 << PCINT0) | (1 << PCINT1) | (1 << PCINT2); // Interrupciones de los niveles de carga
+	PCMSK |= (1 << PCINT0); // Interrupcion carga baja B0
+
+	PCMSK1 |= (1 << PCINT8); // Interrupcion nivel alta A0
     
+	PCMSK2 |= (1 << PCINT17); //Interrupcion nivel media D6
+
+	MCUCR |= (1<<ISC01) | (1<<ISC00); // LA INTERRUPCION SE DETECTARA EN LOS FLANCOS POSITIVOS.
+	
 	
 	// Habilitar interrupciones globales
     sei();
 }
 
+void delay_ms(uint16_t ms) {
+    uint16_t count = 256 - ((F_CPU / 64) / 1000);
+
+    while (ms > 0) {
+        TCCR0A = 0x00;  // Modo normal
+        TCCR0B = 0x03;  // Preescalador de 64
+        TIMSK = 0x01;  // Habilitar interrupción de desbordamiento
+        TCNT0 = count;  // Cargar valor inicial
+
+        // Esperar a que se complete el retardo
+        while ((TIFR & 0x01) == 0);
+        TIFR = 0x01;   // Borrar bandera de interrupción
+
+        ms--;
+    }
+}
+
+/*
 void delay(int time_delay){
 	TIMSK = 0b10;
 	enable = 1;
@@ -234,6 +263,7 @@ void delay(int time_delay){
 	TIMSK = 0b00;
 	enable = 0;   
 }
+*/
 
 /* Definición de led individuales que indican
 el estado en el ciclo de trabajo de la lavadora:
@@ -273,24 +303,24 @@ el nivel de carga
 */
 
 void green_light_load(int time_delay){
-    PORTD = 0b0001000;
-    delay(200);
+	PORTD |= (1<<PD0);
+    delay_ms(2000);
     PORTD = 0b0000000; // Lo dejamos en bajo
-	delay(200);
+	delay_ms(2000);
 }
 
 void yellow_light_load(int time_delay){
-    PORTD = 0b0010000;
-    delay(200);
+    PORTD |= (1<<PD1);
+    delay_ms(2000);
     PORTD = 0b0000000; // Lo dejamos en bajo
-    delay(200);
+    delay_ms(2000);
 }
 
 void red_light_load(int time_delay){
-    PORTD = 0b0100000;
-    delay(200);
-    PORTD = 0b0000000;// Lo dejamos en bajo
-    delay(200);
+    PORTA |= (1<<PA1);
+    delay_ms(2000);
+    PORTA = 0b000;// Lo dejamos en bajo
+    delay_ms(2000);
 }
 
 /* Función que muestra debidamente los números en cada display*/
