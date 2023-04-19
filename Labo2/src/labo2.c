@@ -166,12 +166,22 @@ ISR(INT1_vect) //Boton start
 	state = start_wash;
 }
 
+ISR(PCINT0_vect) {
+	//Interupcion carga baja
+	state = low_load;
 
-ISR(PCINT0_vect) 
+}
+ISR(PCINT1_vect) {
+	state = medium_load;
+}
+ISR(PCINT2_vect) {
+	state = high_load;
+} 
+
+/*ISR(PCINT0_vect) 
 {
 	if (bit_is_set(PINB, PB0)) {
 		load_state = low_load;
-		green_light_load(time_delay);
 	}
 	if (bit_is_set(PINB, PB1)) {
 		load_state = medium_load;
@@ -179,7 +189,7 @@ ISR(PCINT0_vect)
 	if (bit_is_set(PINB, PB2)) {
 		load_state = high_load;
 	}
-}
+}*/
 
 
 void setup()
