@@ -12,188 +12,102 @@
 #include <avr/interrupt.h>
 #include <stdio.h>
 
-/* Se definen las varibles para las 3 interrupciones*/
-int counter, enable, state, wash_state, next_wash_state, load_state;
-int time_delay = 1000;
+//Definicion de pines
+#define STOP_BUTTON (1<<PD2)
+#define START_BUTTON (1<<PD3)
+#define MEDIUM_LOAD_BUTTON (1<<PD6)
+#define LOW_LOAD_BUTTON (1<<PB0)
+#define HIGH_LOAD_BUTTON (1<<PA0)
+#define LED_LOW_LOAD (1<<PD0)
+#define LED_MEDIUM_LOAD (1<<PD1)
+#define LED_HIGH_LOAD (1<<PA1)
 
-// Definición de estados
 
-#define waiting_user_input 0 
+//Definicion de estados
+typedef enum {
+	STATE_IDEL,
+	STATE_START_WASH,
+	STATE_STOP_WASH,
+	STATE_WATER_SUPPLY,
+	STATE_WASH,
+	STATE_RISE,
+	STATE_SPIN,
+	STATE_FINISH
+} state_t;
 
-#define low_load 1 //carga baja
 
-#define medium_load 2 // carga media
-
-#define high_load 3 // carga alta
-
-#define stop_wash 4
-
-#define start_wash 5 // inicio ciclo de lavado, se define el patron de acuerdo
-					 // al ciclo seleccionado, interrupcion del usuario
-
-#define suministro_agua 6 // primer paso del lavado, enciende led correspondiente 
-						  // y pasa el tiempo en el display
-
-#define lavar 7 // segundo paso, enciende led correspondiente y pasa tiempo en el display
-
-#define enjuagar 8 // tercer paso, enciende led correspondiente y pasa tiempo en el display
-
-#define centrifugar 9 // cuarto paso, enciende led correspondiente y pasa tiempo en el display
-
-#define finish 10  // fin del ciclo de lavado
+// Se definen las varibles globales
+volatile state_t state = STATE_IDEL;
+volatile uint8_t load = 0;
 
 //Declaracion de funciones
 void setup();
-void delay(int time_delay);
-void green_light(int time_delay);
-void yellow_light(int time_delay);
-void red_light(int time_delay);
-void green_light_load(int time_delay);
-void yellow_light_load(int time_delay);
-void red_light_load(int time_delay);
+void delay_ms(uint16_t ms);
 
 
 int main(void)
 {
     setup();
-
-	//char state = waiting_user_input;
-	//char wash_state = waiting_user_input;
-	char load_state= waiting_user_input;
-	//char next_wash_state = waiting_user_input;
 	while(1){
-		switch(load_state){
-			case(low_load):
-				green_light_load(time_delay);
 
-			break;
-			case(medium_load):
-				yellow_light_load(time_delay);
-		
-			break;
-			case(high_load):
-				red_light_load(time_delay);
-
-			break;
-
-			default: 
-				next_wash_state = waiting_user_input;
-			break;
-		}
-	/*
-		switch(wash_state){
-			case(suministro_agua):
-				if(load_state == low_load){
-					//Definen valores de los tiempos
-				}
-				else if(load_state == medium_load){
-
-				}
-				else if(load_state == high_load){
-
-				}
-			break;
-			case(lavar):
-				if(load_state == low_load){
-					
-				}
-				else if(load_state == medium_load){
-
-				}
-				else if(load_state == high_load){
-
-				}
-			break;
-			case(enjuagar):
-				if(load_state == low_load){
-					
-				}
-				else if(load_state == medium_load){
-
-				}
-				else if(load_state == high_load){
-
-				}
-			break;
-			case(centrifugar):
-					if(load_state == low_load){
-						
-					}
-					else if(load_state == medium_load){
-
-					}
-					else if(load_state == high_load){
-
-					}
-			break;
-			case(finish):
-			break;
-		}
-
-		switch(state){
-			wash_state = next_wash_state;
-			case(start_wash):
-				wash_state = suministro_agua;
-				if(wash_state == suministro_agua){
-					next_wash_state = lavar;
-				}
-				else if(wash_state == lavar){
-					next_wash_state = enjuagar;
-				}
-				else if(wash_state == enjuagar){
-					next_wash_state = centrifugar;
-				}
-				else if(wash_state == centrifugar){
-					next_wash_state = finish;
-				}
-				else{
-					state = start_wash;
-				}
-			break;
-			case(stop_wash):
-			break;
-		}
-*/
 	}
-		
+	return 0;
 }
 
 ISR(INT0_vect) //Boton pausa
 {
-	state = stop_wash;
+	//state = stop_wash;
+	if(PIND & STOP_BUTTON){
+		state = STATE_IDEL;
+	}
+	else{
+
+	}
 }
 
 ISR(INT1_vect) //Boton start
 {
-	state = start_wash;
-}
+	if(PIND & START_BUTTON){
+		state = STATE_START_WASH;
+	}
+	else {
 
-ISR(PCINT0_vect) {
-	//Interupcion carga baja
-	state = low_load;
+	}
+}
+ISR(PCINT0_vect)//Interupcion carga baja 
+{
+	if(PINB & LOW_LOAD_BUTTON){
+		load = 1;
+		PORTD |= LED_LOW_LOAD;
+	}
+	else {
+		PORTD &= ~LED_LOW_LOAD;
+	}
 
 }
-ISR(PCINT1_vect) {
-	//Interupcion carga baja
-	state = medium_load;
+ISR(PCINT2_vect) //Interupcion carga media
+{
+	if(PIND & MEDIUM_LOAD_BUTTON){
+		load = 2;
+		PORTD |= LED_MEDIUM_LOAD;
+	}
+	else {
+		PORTD &= ~LED_MEDIUM_LOAD;
+	}
+
 }
-ISR(PCINT2_vect) {
-	//Interupcion carga baja
-	state = high_load;
+ISR(PCINT1_vect) //Interupcion carga alta
+{
+	if(PINA & HIGH_LOAD_BUTTON){
+		load = 3;
+		PORTA |= LED_HIGH_LOAD;
+	}
+	else {
+		PORTA &= ~LED_HIGH_LOAD;
+	}
 } 
 
-/*ISR(PCINT0_vect) 
-{
-	if (bit_is_set(PINB, PB0)) {
-		load_state = low_load;
-	}
-	if (bit_is_set(PINB, PB1)) {
-		load_state = medium_load;
-	}
-	if (bit_is_set(PINB, PB2)) {
-		load_state = high_load;
-	}
-}*/
+
 
 
 void setup()
@@ -210,23 +124,32 @@ void setup()
 	D2, D3 Y D4, además de D0 y D6
 */
 {
-    DDRB = 0b11111110; 
-	DDRD = 0b0000011;
-	DDRA = 0b010;
 
-	//Configurar GIMSK para activar interupciones
-	GIMSK |= (1<<PCIE0) | (1<<PCIE0) | (1<<PCIE2); //Interupciones de los botones de carga
+	//Configuras los pines como entrada
+	DDRB &= ~LOW_LOAD_BUTTON;
+	DDRA &= ~HIGH_LOAD_BUTTON;
+	DDRD &= ~(MEDIUM_LOAD_BUTTON | STOP_BUTTON | START_BUTTON);
+	//Configuras los pines como salida
+	DDRD |= (LED_MEDIUM_LOAD | LED_LOW_LOAD);
+	DDRA |=	LED_HIGH_LOAD;
+
+	// Habilitar pull-up en botones
+    PORTD |= (START_BUTTON | STOP_BUTTON | MEDIUM_LOAD_BUTTON);
+	PORTB |= LOW_LOAD_BUTTON; 
+	PORTA |= HIGH_LOAD_BUTTON;
+
+	//Configucion registro PCMSK para activar interupciones
+	PCMSK |= (1<<PCINT0); // Interrupcion carga baja B0
+
+	PCMSK1 |= (1<<PCINT8); // Interrupcion nivel alta A0
+    
+	PCMSK2 |= (1<<PCINT17); //Interrupcion nivel media D6
+
+	//Configuracion GIMSK para activar interupciones
+	GIMSK |= ((1<<PCIE0) | (1<<PCIE1) | (1<<PCIE2)); //Interupciones de los botones de carga
 	GIMSK |= (1 << INT0) | (1 << INT1); // Interrupcion de inicio y final
 
-	//Configurar INT0 e INT1 por flanco positivo EICRA (deafult positivo creo)
-
-	PCMSK |= (1 << PCINT0); // Interrupcion carga baja B0
-
-	PCMSK1 |= (1 << PCINT8); // Interrupcion nivel alta A0
-    
-	PCMSK2 |= (1 << PCINT17); //Interrupcion nivel media D6
-
-	MCUCR |= (1<<ISC01) | (1<<ISC00); // LA INTERRUPCION SE DETECTARA EN LOS FLANCOS POSITIVOS.
+	//MCUCR |= (1<<ISC01) | (1<<ISC00); // LA INTERRUPCION SE DETECTARA EN LOS FLANCOS POSITIVOS.
 	
 	
 	// Habilitar interrupciones globales
@@ -251,80 +174,6 @@ void delay_ms(uint16_t ms) {
 }
 
 /*
-void delay(int time_delay){
-	TIMSK = 0b10;
-	enable = 1;
-	counter = 0;
-	TCNT0= 0x00;
-	while(counter <= time_delay){
-		PORTD &= 0xFF;
-	}
-	// Volvemos las variables al valor inicial
-	TIMSK = 0b00;
-	enable = 0;   
-}
-*/
-
-/* Definición de led individuales que indican
-el estado en el ciclo de trabajo de la lavadora:
-suministro de agua, lavar, enjuagar y centrifugar
-
-void green_light(int time_delay){
-    PORTB = 0b00000001;
-    delay(200);
-    PORTB = 0b00000000; // Lo dejamos en bajo
-	delay(200);
-}
-
-void yellow_light(int time_delay){
-    PORTB = 0b00000010;
-    delay(200);
-    PORTB = 0b00000000; // Lo dejamos en bajo
-    delay(200);
-}
-
-void red_light(int time_delay){
-    PORTB = 0b00000100;
-    delay(200);
-    PORTB = 0b00000000; // Lo dejamos en bajo
-    delay(200);
-}
-
-void blue_light(int time_delay){
-    PORTB = 0b00001000;
-    delay(200);
-    PORTB = 0b00000000; // Lo dejamos en bajo
-    delay(200);
-}
-*/
-
-/* Definición de leds individuales para indicar
-el nivel de carga 
-*/
-
-void green_light_load(int time_delay){
-	PORTD |= (1<<PD0);
-    delay_ms(2000);
-    PORTD = 0b0000000; // Lo dejamos en bajo
-	delay_ms(2000);
-}
-
-void yellow_light_load(int time_delay){
-    PORTD |= (1<<PD1);
-    delay_ms(2000);
-    PORTD = 0b0000000; // Lo dejamos en bajo
-    delay_ms(2000);
-}
-
-void red_light_load(int time_delay){
-    PORTA |= (1<<PA1);
-    delay_ms(2000);
-    PORTA = 0b000;// Lo dejamos en bajo
-    delay_ms(2000);
-}
-
-/* Función que muestra debidamente los números en cada display*/
-// Corregir lo de GPIO para este caso
 void led_display(int valor, int display)
 {
     if (display == 0)
@@ -373,3 +222,4 @@ void led_display(int valor, int display)
 		else PORTB = 0b00110001;
 	}
 }
+*/
