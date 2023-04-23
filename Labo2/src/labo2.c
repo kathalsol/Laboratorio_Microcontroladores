@@ -50,10 +50,10 @@ void setup();
 void setup_timer0(uint8_t compare_value);
 void delay_ms(uint16_t ms);
 void fsm();
-int water_supply(uint8_t load);
-int wash(uint8_t load);
-int rise(uint8_t load);
-int spin(uint8_t load);
+uint8_t water_supply(uint8_t load);
+uint8_t wash(uint8_t load);
+uint8_t rise(uint8_t load);
+uint8_t spin(uint8_t load);
 void finish(uint8_t load);
 void led_display(int valor, int display);
 
@@ -146,9 +146,11 @@ ISR(TIMER0_COMPA_vect) {
 		TIMSK &= ~(1<<TOIE0);
 	}
 	contador = 0;
+	time = 0;
+	time_left = 0;
 }
 
-_
+
 
 void setup()
 {
@@ -209,26 +211,26 @@ void fsm()
 		next_state = STATE_WATER_SUPPLY; 
 		break;	
 	case STATE_WATER_SUPPLY:
-		water_supply(load);
+		compare_value = water_supply(load);
 		next_state = STATE_WASH;
 		break;
 	case STATE_WASH:
-		wash(load);
+		compare_value = wash(load);
 		next_state = STATE_RISE;
 		break;
 	case STATE_RISE:
-		rise(load);
+		compare_value = rise(load);
 		next_state = STATE_SPIN;
 		break;
 	case STATE_SPIN:
-		spin(load);
-		next_state = STATE_FINISH;
+		compare_value = spin(load);
+		//next_state = STATE_FINISH;
 		break;
-	case STATE_FINISH:
+	/*case STATE_FINISH:
 		finish(load);
-		break;
+		break;*/
 	default:
-
+		next_state = STATE_IDEL;
 	}
 }
 
@@ -250,7 +252,7 @@ void delay_ms(uint16_t ms)
     }
 }
 
-int water_supply(uint8_t load)
+uint8_t water_supply(uint8_t load)
 {	
 	PORTA |= LED_STATE_WATER_SUPPLY;
 	PORTD &= ~(LED_STATE_WASH | LED_STATE_RISE );
@@ -278,7 +280,7 @@ int water_supply(uint8_t load)
 	return compare_value;
 }
 
-int wash(uint8_t load)
+uint8_t wash(uint8_t load)
 {	
 	PORTD |= LED_STATE_WASH;
 	PORTD &= ~LED_STATE_RISE ;
@@ -307,7 +309,7 @@ int wash(uint8_t load)
 	return compare_value;
 }
 
-int rise(uint8_t load)
+uint8_t rise(uint8_t load)
 {	
 	PORTD |= LED_STATE_RISE;
 	PORTA &= ~LED_STATE_WATER_SUPPLY;
@@ -336,7 +338,7 @@ int rise(uint8_t load)
 	return compare_value;
 }
 
-int spin(uint8_t load)
+uint8_t spin(uint8_t load)
 {	
 	PORTB |= LED_STATE_SPIN;
 	PORTD &= ~(LED_STATE_WASH | LED_STATE_RISE);
