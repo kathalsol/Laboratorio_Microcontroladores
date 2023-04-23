@@ -53,6 +53,7 @@ uint8_t water_supply(uint8_t load);
 uint8_t wash(uint8_t load);
 uint8_t rise(uint8_t load);
 uint8_t spin(uint8_t load);
+void display_led_with_timer(int timer);
 void finish(uint8_t load);
 void led_display(int valor, int display);
 
@@ -245,21 +246,15 @@ uint8_t water_supply(uint8_t load)
 
 	if (load == 1){
 		compare_value = 1;
-		_delay_ms(10000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 	else if (load == 2){
 		compare_value = 2;
-		_delay_ms(20000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 	else if (load == 3){
 		compare_value = 3;
-		_delay_ms(30000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 
 	return compare_value;
@@ -274,21 +269,15 @@ uint8_t wash(uint8_t load)
 
 	if (load == 1){
 		compare_value = 3;
-		_delay_ms(10000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 	else if (load == 2){
 		compare_value = 7;
-		_delay_ms(20000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 	else if (load == 3){
-		compare_value = 10;
-		_delay_ms(30000);
-		// led_display(1,0);
-		// _delay_ms(10000);
+		compare_value = 9; // TODO: No se pudo usar los dos displays al mismo tiempo
+		display_led_with_timer(compare_value);
 	}
 
 	return compare_value;
@@ -303,21 +292,15 @@ uint8_t rise(uint8_t load)
 	
 	if (load == 1){
 		compare_value = 2;
-		_delay_ms(10000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 	else if (load == 2){
 		compare_value = 4;
-		_delay_ms(20000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 	else if (load == 3){
 		compare_value = 5;
-		_delay_ms(30000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 
 	return compare_value;
@@ -331,24 +314,29 @@ uint8_t spin(uint8_t load)
 	
 	if (load == 1){
 		compare_value = 3;
-		_delay_ms(10000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 	else if (load == 2){
 		compare_value = 6;
-		_delay_ms(20000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 	else if (load == 3){
 		compare_value = 9;
-		_delay_ms(30000);
-		// led_display(0,compare_value);
-		// _delay_ms(10000);
+		display_led_with_timer(compare_value);
 	}
 
 	return compare_value;
+}
+
+void display_led_with_timer(int timer)
+{
+	while(timer > 0)
+	{
+		led_display(timer, 1);
+		_delay_ms(10000);
+		timer--;
+	}
+	led_display(0, 0);
 }
 
 void finish(uint8_t load)
@@ -362,49 +350,49 @@ void finish(uint8_t load)
 
 void led_display(int valor, int display)
 {
+	PORTB &= 0b10000111;
     if (display == 0)
 	{
-		if (valor == 0) PORTB = 0b00000000;
+		if (valor == 0) PORTB |= 0b00000000;
 
-		else if (valor == 1) PORTB = 0b00000001; 
+		else if (valor == 1) PORTB |= 0b01000000; 
 
-		else if (valor == 2) PORTB = 0b00000010; 
+		else if (valor == 2) PORTB |= 0b00100000; 
 
-		else if (valor == 3) PORTB = 0b00000011;
+		else if (valor == 3) PORTB |= 0b01100000;
 
-		else if (valor == 4) PORTB = 0b00000100;
+		else if (valor == 4) PORTB |= 0b00010000;
 
-		else if (valor == 5) PORTB = 0b00000101;
+		else if (valor == 5) PORTB |= 0b01010000;
 
-		else if (valor == 6) PORTB = 0b00000110;
+		else if (valor == 6) PORTB |= 0b00110000;
 
-		else if (valor == 7) PORTB = 0b00000111;
+		else if (valor == 7) PORTB |= 0b01110000;
 
-		else if (valor == 8) PORTB = 0b00010000;
+		else if (valor == 8) PORTB |= 0b00001000;
 
-		else PORTB = 0b00010001;
+		else PORTB |= 0b01001000;
 	}
-
 	else  // display == 1
 	{
-		if (valor == 0) PORTB = 0b00100000;
+		if (valor == 0) PORTB |= 0b00100000;
 
-		else if (valor == 1) PORTB = 0b00100001; 
+		else if (valor == 1) PORTB |= 0b01000100; 
 
-		else if (valor == 2) PORTB = 0b00100010; 
+		else if (valor == 2) PORTB |= 0b00100100; 
 
-		else if (valor == 3) PORTB = 0b00100011;
+		else if (valor == 3) PORTB |= 0b01100100;
 
-		else if (valor == 4) PORTB = 0b00100100;
+		else if (valor == 4) PORTB |= 0b00010100;
 
-		else if (valor == 5) PORTB = 0b00100101;
+		else if (valor == 5) PORTB |= 0b01010100;
 
-		else if (valor == 6) PORTB = 0b00100110;
+		else if (valor == 6) PORTB |= 0b00110100;
 
-		else if (valor == 7) PORTB = 0b00100111;
+		else if (valor == 7) PORTB |= 0b01110100;
 
-		else if (valor == 8) PORTB = 0b00110000;
+		else if (valor == 8) PORTB |= 0b00001100;
 
-		else PORTB = 0b00110001;
+		else PORTB |= 0b01001100;
 	}
 }
