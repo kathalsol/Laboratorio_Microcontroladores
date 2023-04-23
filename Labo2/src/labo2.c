@@ -70,9 +70,12 @@ int main(void)
 
 ISR(INT0_vect) //Boton reset
 {
-	//state = stop_wash;
 	if(PIND & RESET_BUTTON){
 		state = STATE_IDEL;
+		PORTD &= ~LED_STATE_RISE;
+		PORTA &= ~LED_STATE_WATER_SUPPLY;
+		PORTD &= ~LED_STATE_WASH;
+		PORTB &= ~LED_STATE_SPIN;
 	}
 }
 
