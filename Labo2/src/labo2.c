@@ -48,7 +48,6 @@ volatile uint8_t time = 0, time_left = 0;
 //Declaracion de funciones
 void setup();
 void setup_timer0(uint8_t compare_value);
-void delay_ms(uint16_t ms);
 void fsm();
 uint8_t water_supply(uint8_t load);
 uint8_t wash(uint8_t load);
@@ -90,7 +89,6 @@ ISR(INT1_vect) //Boton start/pause
 			TIMSK |= (1<<TOIE0);
 			PORTB |= LED_START_PAUSE;
 		}
-		
 	}
 }
 
@@ -154,7 +152,6 @@ ISR(TIMER0_COMPA_vect) {
 
 void setup()
 {
-
 	//Configuras los pines como entrada
 	DDRB &= ~LOW_LOAD_BUTTON;
 	DDRA &= ~HIGH_LOAD_BUTTON;
@@ -204,52 +201,37 @@ void setup_timer0(uint8_t compare_value)
 
 void fsm()
 {	
-	state = next_state;
-	switch (state)
+	if (PORTB & LED_START_PAUSE) // todo
 	{
-	case STATE_IDEL:
-		next_state = STATE_WATER_SUPPLY; 
-		break;	
-	case STATE_WATER_SUPPLY:
-		compare_value = water_supply(load);
-		next_state = STATE_WASH;
-		break;
-	case STATE_WASH:
-		compare_value = wash(load);
-		next_state = STATE_RISE;
-		break;
-	case STATE_RISE:
-		compare_value = rise(load);
-		next_state = STATE_SPIN;
-		break;
-	case STATE_SPIN:
-		compare_value = spin(load);
-		//next_state = STATE_FINISH;
-		break;
-	/*case STATE_FINISH:
-		finish(load);
-		break;*/
-	default:
-		next_state = STATE_IDEL;
+		state = next_state;
+		switch (state)
+		{
+		case STATE_IDEL:
+			next_state = STATE_WATER_SUPPLY; 
+			break;	
+		case STATE_WATER_SUPPLY:
+			compare_value = water_supply(load);
+			next_state = STATE_WASH;
+			break;
+		case STATE_WASH:
+			compare_value = wash(load);
+			next_state = STATE_RISE;
+			break;
+		case STATE_RISE:
+			compare_value = rise(load);
+			next_state = STATE_SPIN;
+			break;
+		case STATE_SPIN:
+			compare_value = spin(load);
+			next_state = STATE_FINISH;
+			break;
+		case STATE_FINISH:
+			finish(load);
+			break;
+		default:
+			next_state = STATE_IDEL;
+		}
 	}
-}
-
-void delay_ms(uint16_t ms) 
-{
-    uint16_t count = 256 - ((F_CPU / 64) / 1000);
-
-    while (ms > 0) {
-        TCCR0A = 0x00;  // Modo normal
-        TCCR0B = 0x03;  // Preescalador de 64
-        TIMSK = 0x01;  // Habilitar interrupción de desbordamiento
-        TCNT0 = count;  // Cargar valor inicial
-
-        // Esperar a que se complete el retardo
-        while ((TIFR & 0x01) == 0);
-        TIFR = 0x01;   // Borrar bandera de interrupción
-
-        ms--;
-    }
 }
 
 uint8_t water_supply(uint8_t load)
@@ -257,24 +239,24 @@ uint8_t water_supply(uint8_t load)
 	PORTA |= LED_STATE_WATER_SUPPLY;
 	PORTD &= ~(LED_STATE_WASH | LED_STATE_RISE );
 	PORTB &= ~LED_STATE_SPIN;
-	
+
 	if (load == 1){
 		compare_value = 1;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(10000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 	else if (load == 2){
 		compare_value = 2;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(20000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 	else if (load == 3){
 		compare_value = 3;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(30000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 
 	return compare_value;
@@ -286,24 +268,24 @@ uint8_t wash(uint8_t load)
 	PORTD &= ~LED_STATE_RISE ;
 	PORTA &= ~LED_STATE_WATER_SUPPLY;
 	PORTB &= ~LED_STATE_SPIN;
-	
+
 	if (load == 1){
 		compare_value = 3;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(10000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 	else if (load == 2){
 		compare_value = 7;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(20000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 	else if (load == 3){
 		compare_value = 10;
-		delay_ms(100);
-		led_display(1,0);
-		delay_ms(100);
+		_delay_ms(30000);
+		// led_display(1,0);
+		// _delay_ms(10000);
 	}
 
 	return compare_value;
@@ -318,21 +300,21 @@ uint8_t rise(uint8_t load)
 	
 	if (load == 1){
 		compare_value = 2;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(10000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 	else if (load == 2){
 		compare_value = 4;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(20000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 	else if (load == 3){
 		compare_value = 5;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(30000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 
 	return compare_value;
@@ -346,21 +328,21 @@ uint8_t spin(uint8_t load)
 	
 	if (load == 1){
 		compare_value = 3;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(10000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 	else if (load == 2){
 		compare_value = 6;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(20000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 	else if (load == 3){
 		compare_value = 9;
-		delay_ms(100);
-		led_display(0,compare_value);
-		delay_ms(100);
+		_delay_ms(30000);
+		// led_display(0,compare_value);
+		// _delay_ms(10000);
 	}
 
 	return compare_value;
