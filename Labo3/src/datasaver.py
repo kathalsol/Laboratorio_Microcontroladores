@@ -17,9 +17,21 @@ print("connected to: " + ser.portstr)
 
 #this will store the line
 line = []
+count = 0
 
 while True:
     for c in ser.read():
         c=chr(c)
         line.append(c)
+        if c == '\n':
+            print("Line: " + ''.join(line))
+            str = ''.join(line)
+            str = str[:-2] + ','
+            if(count < 3):
+                f.write(str)
+                count += 1
+            elif(count == 3):
+                f.write(str[:-1]+ "\n")
+                count = 0
+            line=[]
 #       print(c)

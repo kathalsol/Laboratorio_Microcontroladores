@@ -1,3 +1,4 @@
+#include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 
 // Define pins for LEDs and buttons
@@ -21,6 +22,9 @@
 #define RST 3
 
 Adafruit_PCD8544 display = Adafruit_PCD8544(SCLK, DIN, DC, CS, RST);
+
+//Variables globales
+float vA, vB, vC, vD = {0.00};
 
 void setup() {
   // Initialize serial communication
@@ -55,6 +59,56 @@ void setup() {
   display.clearDisplay();
 }
 
+//Funciones
+float get_max_vA() {
+    float max_val = 0;
+    for (int i = 0; i < 100; i++) {
+        float val = analogRead(A5) * (5.0 / 1023.0);
+        if (val > max_val) {
+            max_val = val;
+        }
+        delayMicroseconds(10); // Possible issue here
+    }
+    return max_val;
+}
+
+float get_max_vB() {
+  float max_val = 0;
+  for (int i = 0; i < 100; i++) {
+        float val = analogRead(A4) * (5.0 / 1023.0);
+        if (val > max_val) {
+            max_val = val;
+        }
+        delayMicroseconds(10);
+    }
+    return max_val;
+}
+
+float get_max_vC() {
+  float max_val = 0;
+  for (int i = 0; i < 100; i++) {
+        float val = analogRead(A3) * (5.0 / 1023.0);
+        if (val > max_val) {
+            max_val = val;
+        }
+        delayMicroseconds(10);
+    }
+    return max_val;
+}
+
+float get_max_vD() {
+  float max_val = 0;
+  for (int i = 0; i < 100; i++) {
+        float val = analogRead(A2) * (5.0 / 1023.0);
+        if (val > max_val) {
+            max_val = val;
+        }
+        delayMicroseconds(10);
+    }
+    return max_val;
+}
+
+//main loop
 void loop() {
   // Check if AC/DC button is pressed
   int mode = digitalRead(BUTTON_ACDC);
@@ -62,10 +116,10 @@ void loop() {
   switch(mode) {
     case HIGH:
       // AC mode
-      float vA = get_max_vA();
-      float vB = get_max_vB();
-      float vC = get_max_vC();
-      float vD = get_max_vD();
+      vA = get_max_vA();
+      vB = get_max_vB();
+      vC = get_max_vC();
+      vD = get_max_vD();
       if (vA > THRESHOLD_A) {
         digitalWrite(LED_A, HIGH);
       } else {
@@ -95,40 +149,4 @@ void loop() {
   
   // Delay before restarting loop
   delay(100);
-}
-
-float get_max_vA() {
-    float max_val = 0;
-    for (int i = 0; i < 100; i++) {
-        float val = analogRead(A0) * (5.0 / 1023.0);
-        if (val > max_val) {
-            max_val = val;
-        }
-        delayMicroseconds(10); // Possible issue here
-    }
-    return max_val;
-}
-
-float get_max_vB() {
-  float max_val = 0;
-  for (int i = 0; i < 100; i++) {
-        float val = analogRead(A1) * (5.0 / 1023.0);
-        if (val > max_val) {
-            max_val = val;
-        }
-        delayMicroseconds(10);
-    }
-    return max_val;
-}
-
-float get_max_vD() {
-  float max_val = 0;
-  for (int i = 0; i < 100; i++) {
-        float val = analogRead(A2) * (5.0 / 1023.0);
-        if (val > max_val) {
-            max_val = val;
-        }
-        delayMicroseconds(10);
-    }
-    return max_val;
 }
