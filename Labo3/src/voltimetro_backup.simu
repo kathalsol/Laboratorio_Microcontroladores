@@ -134,7 +134,7 @@ Circuit Id: Ground-42
 
 Unique  Id: Fixed Voltage-81: 
 Circuit Id: Fixed Voltage-11
-<item labely="-24" valLabelx="-7" Show_Volt="true" boardRot="-1e+6" labelx="-64" vflip="1" itemtype="Fixed Voltage" objectName="Fixed Voltage-81" Show_id="false" boardPos="-1e+6,-1e+6" id="Fixed Voltage-11" Voltage="-24" Out="false" rotation="-180" x="-400" mainComp="false" valLabely="20" y="-492" circPos="0,0" circRot="0" valLabRot="-180" Unit=" V" hflip="1" labelrot="0"/>
+<item labely="-24" valLabelx="-7" Show_Volt="true" boardRot="-1e+6" labelx="-64" vflip="1" itemtype="Fixed Voltage" objectName="Fixed Voltage-81" Show_id="false" boardPos="-1e+6,-1e+6" id="Fixed Voltage-11" Voltage="-24" Out="true" rotation="-180" x="-400" mainComp="false" valLabely="20" y="-492" circPos="0,0" circRot="0" valLabRot="-180" Unit=" V" hflip="1" labelrot="0"/>
 
 Unique  Id: Ground-82: 
 Circuit Id: Ground-38
@@ -182,7 +182,7 @@ Circuit Id: Node-36
 
 Unique  Id: Fixed Voltage-151: 
 Circuit Id: Fixed Voltage-11
-<item labely="-24" valLabelx="-4" Show_Volt="true" boardRot="-1e+6" labelx="-64" vflip="1" itemtype="Fixed Voltage" objectName="Fixed Voltage-151" Show_id="false" boardPos="-1e+6,-1e+6" id="Fixed Voltage-11" Voltage="8" Out="false" rotation="-180" x="-408" mainComp="false" valLabely="18" y="-352" circPos="0,0" circRot="0" valLabRot="-180" Unit=" V" hflip="1" labelrot="0"/>
+<item labely="-24" valLabelx="-4" Show_Volt="true" boardRot="-1e+6" labelx="-64" vflip="1" itemtype="Fixed Voltage" objectName="Fixed Voltage-151" Show_id="false" boardPos="-1e+6,-1e+6" id="Fixed Voltage-11" Voltage="8" Out="true" rotation="-180" x="-408" mainComp="false" valLabely="18" y="-352" circPos="0,0" circRot="0" valLabRot="-180" Unit=" V" hflip="1" labelrot="0"/>
 
 Unique  Id: Resistor-152: 
 Circuit Id: Resistor-18
