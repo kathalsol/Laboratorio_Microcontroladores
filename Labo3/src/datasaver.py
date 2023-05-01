@@ -1,37 +1,31 @@
-#!/usr/bin/python3
-import serial
+#!/usr/bin/env python3
+import serial #Paquete de comunicacion arduino / python
 
-ser = serial.Serial(
-    port='/tmp/ttyS1',\
-    baudrate=9600,\
-    parity=serial.PARITY_NONE,\
-    stopbits=serial.STOPBITS_ONE,\
-    bytesize=serial.EIGHTBITS,\
-    timeout=0\
-    )
-#ser=serial.Serial('/tmp/ttyS1', 9600)
-f = open('output.csv', 'w+')
-f.write('CANAL A, CANAL B, CANAL C, CANAL D,')
+baud = 9600
+samples = 29 
 
-print("connected to: " + ser.portstr)
+file = open("datos.csv", 'w') 
+file.close()
+print("Se leyó el archivo")
 
-#this will store the line
-line = []
-count = 0
 
-while True:
-    for c in ser.read():
-        c=chr(c)
-        line.append(c)
-        if c == '\n':
-            print("Line: " + ''.join(line))
-            str = ''.join(line)
-            str = str[:-2] + ','
-            if(count < 3):
-                f.write(str)
-                count += 1
-            elif(count == 3):
-                f.write(str[:-1]+ "\n")
-                count = 0
-            line=[]
-#       print(c)
+ser = serial.Serial("/tmp/ttyS1", baud) #Comunicacion con el arduino: puerto ttyS1
+print("Conexión exitosa")
+
+file = open("datos.csv", 'w') #Archivo csv
+print("Se creó el archivo csv")
+
+contador  = 0
+
+while (1):
+    getData = str(ser.readline())
+    data = getData[2:][:-5] 
+    print(data)
+
+    if contador == 4:
+        file = open("datos.csv", "a")
+        file.write(data + "\n")
+        contador = 0
+    else:
+        file.write(data + ",")
+        contador+=1
