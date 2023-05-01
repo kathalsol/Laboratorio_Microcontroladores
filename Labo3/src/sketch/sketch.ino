@@ -71,26 +71,53 @@ float get_max_val(float PORT) {
 }
 
 // Functions LEDs for precaution
-void LED_Alarm(float vA, float vB, float vC, float vD, float MODE){
-    if(vA > MODE){
+void LED_Alarm_AC(float vA, float vB, float vC, float vD){
+    if(vA > THRESHOLD_AC){
       digitalWrite(LED_A, HIGH);
     } else{
       digitalWrite(LED_A, LOW); 
     }
 
-    if(vB > MODE){
+    if(vB > THRESHOLD_AC){
       digitalWrite(LED_B, HIGH);
     } else{
       digitalWrite(LED_B, LOW); 
     }
 
-    if(vC > MODE){
+    if(vC > THRESHOLD_AC){
       digitalWrite(LED_C, HIGH);
     } else{
       digitalWrite(LED_C, LOW); 
     }
 
-    if(vD > MODE){
+    if(vD > THRESHOLD_AC){
+      digitalWrite(LED_D, HIGH);
+    } else{
+      digitalWrite(LED_D, LOW); 
+    }
+}
+
+// Functions LEDs for precaution
+void LED_Alarm_DC(float vA, float vB, float vC, float vD){
+    if(vA > THRESHOLD_DC || vA < -THRESHOLD_DC){
+      digitalWrite(LED_A, HIGH);
+    } else{
+      digitalWrite(LED_A, LOW); 
+    }
+
+    if(vB > THRESHOLD_DC || vB < -THRESHOLD_DC){
+      digitalWrite(LED_B, HIGH);
+    } else{
+      digitalWrite(LED_B, LOW); 
+    }
+
+    if(vC > THRESHOLD_DC || vC < -THRESHOLD_DC){
+      digitalWrite(LED_C, HIGH);
+    } else{
+      digitalWrite(LED_C, LOW); 
+    }
+
+    if(vD > THRESHOLD_DC || vD < -THRESHOLD_DC){
       digitalWrite(LED_D, HIGH);
     } else{
       digitalWrite(LED_D, LOW); 
@@ -140,7 +167,7 @@ void loop() {
     display.clearDisplay();
 
     //Call the function Led Alarm for AC
-    LED_Alarm(vAC_A, vAC_B, vAC_C, vAC_D, THRESHOLD_AC);
+    LED_Alarm_AC(vAC_A, vAC_B, vAC_C, vAC_D);
 
   } else{  // DC CASE
 
@@ -170,7 +197,7 @@ void loop() {
     display.clearDisplay();
 
     //Call the function Led Alarm for DC
-    LED_Alarm(vDC_A, vDC_B, vDC_C, vDC_D, THRESHOLD_DC);
+    LED_Alarm_DC(vDC_A, vDC_B, vDC_C, vDC_D);
   }
   
   // Delay before restarting loop
