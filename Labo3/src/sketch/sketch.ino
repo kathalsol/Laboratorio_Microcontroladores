@@ -1,3 +1,12 @@
+/* 
+   Universidad de Costa Rica
+   Laboratorio de Microcontroladores
+   Laboratorio 3 - Voltímetro
+   Estudiantes:  
+    - Katharina Alfaro Solís B80251
+    - Mauricio Rodríguez Obando B96694
+*/
+
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 
@@ -57,7 +66,9 @@ void setup() {
   display.clearDisplay(); // Clear display
 }
 
-//Funciones
+// Function that meters a little range of measurements 
+// and select the max value of them, then is return 
+// the real value in the range of [-24, 24] v
 float get_max_val(float PORT) {
     float max_val = 0;
     for (int i = 0; i < 100; i++) {
@@ -65,9 +76,9 @@ float get_max_val(float PORT) {
         if (val > max_val) {
             max_val = val;
         }
-        delayMicroseconds(150); // Possible issue here
+        delayMicroseconds(150);
     }
-    max_val =  ((((max_val * 5.0) / 1023.0) * 9.6) - 24);
+    max_val =  (((max_val * 5.0) / 1023.0) * 9.6) - 24;
     return max_val;
 }
 
