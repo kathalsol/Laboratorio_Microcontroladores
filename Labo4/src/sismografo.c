@@ -43,3 +43,186 @@
 #define GYR_OUT_Y_H		0x2B
 #define GYR_OUT_Z_L		0x2C
 #define GYR_OUT_Z_H		0x2D
+
+// Parámetros para la pantalla
+#define L3GD20_SENSITIVITY_250DPS  (0.00875F)      
+#define L3GD20_SENSITIVITY_500DPS  (0.0175F)       
+#define L3GD20_SENSITIVITY_2000DPS (0.070F)        
+#define L3GD20_DPS_TO_RADS         (0.017453293F) 
+
+// Declaración de funciones
+static void spi_setup(void);
+void input_setup(void);
+static void adc_setup(void);
+static uint16_t read_adc_naiive(uint8_t channel);
+
+static void spi_setup(void){
+
+    // Periféricos del reloj
+    rcc_periph_clock_enable(RCC_SPI5);
+	/* For spi signal pins */
+	rcc_periph_clock_enable(RCC_GPIOC);
+	/* For spi mode select on the l3gd20 */
+	rcc_periph_clock_enable(RCC_GPIOF);
+
+    // GPIO
+    /* Setup GPIOE3 pin for spi mode l3gd20 select. */
+	gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO1);
+	/* Start with spi communication disabled */
+	gpio_set(GPIOC, GPIO1);
+
+	/* Setup GPIO pins for AF5 for SPI1 signals. */
+	gpio_mode_setup(GPIOF, GPIO_MODE_AF, GPIO_PUPD_NONE,
+			GPIO7 | GPIO8 | GPIO9);
+	gpio_set_af(GPIOF, GPIO_AF5, GPIO7 | GPIO8 | GPIO9);
+
+	//spi initialization
+	spi_set_master_mode(SPI15);
+	spi_set_baudrate_prescaler(SPI15, SPI_CR1_BR_FPCLK_DIV_64);
+	spi_set_clock_polarity_0(SPI15);
+	spi_set_clock_phase_0(SPI15);
+	spi_set_full_duplex_mode(SPI15);
+	spi_set_unidirectional_mode(SPI15); /* bidirectional but in 3-wire */
+	spi_enable_software_slave_management(SPI15);
+	spi_send_msb_first(SPI15);
+	spi_set_nss_high(SPI15);
+
+	//spi_enable_ss_output(SPI15);
+	SPI_I2SCFGR(SPI15) &= ~SPI_I2SCFGR_I2SMOD;
+	spi_enable(SPI15);
+
+    gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_CTRL_REG1); 
+	spi_read(SPI5);
+	spi_send(SPI5, GYR_CTRL_REG1_PD | GYR_CTRL_REG1_XEN |
+			GYR_CTRL_REG1_YEN | GYR_CTRL_REG1_ZEN |
+			(3 << GYR_CTRL_REG1_BW_SHIFT));
+	spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1); 
+
+    gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_CTRL_REG4);
+	spi_read(SPI5);
+	spi_send(SPI5, (1 << GYR_CTRL_REG4_FS_SHIFT));
+	spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
+}
+
+void input_setup(void){
+    /* Enable GPIOA clock. */
+	rcc_periph_clock_enable(RCC_GPIOA);
+
+    /* Enable GPIOG clock. */
+	rcc_periph_clock_enable(RCC_GPIOG);
+
+	/* Set GPIO0 (in GPIO port A) to 'input open-drain'. */
+	gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO0);
+
+    /* Set GPIO13 (in GPIO port G) to 'output push-pull'. LED PG13 */
+	gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13);
+
+	/* Set GPIO14 (in GPIO port G) to 'output push-pull'. LED EMERGENCIA */
+	gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO14);
+}
+
+// Utilizando como base el ejemplo 
+// /libopencm3-examples/examples/stm32/f4/stm32f429i-discovery/adc-dac-printf/adc-dac-printf.c
+
+static void adc_setup(void){
+    gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO3);
+	adc_power_off(ADC1);
+	adc_disable_scan_mode(ADC1);
+	adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_3CYC);
+	adc_power_on(ADC1);
+}
+
+static uint16_t read_adc_naiive(uint8_t channel){
+	uint8_t channel_array[16];
+	channel_array[0] = channel;
+	adc_set_regular_sequence(ADC1, 1, channel_array);
+	adc_start_conversion_regular(ADC1);
+	while (!adc_eoc(ADC1));
+	uint16_t reg16 = adc_read_regular(ADC1);
+	return reg16;
+}
+
+// Funcion que lee las coordenadas xyz del giroscopio
+gyro read_xyz(void)
+{
+	gyro lectura;
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_WHO_AM_I | 0x80);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
+
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_STATUS_REG | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
+
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_TEMP | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
+
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_X_L | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	lectura.x = spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
+
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_X_H | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	lectura.x |=spi_read(SPI5) << 8;
+	gpio_set(GPIOC, GPIO1);
+
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_Y_L | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	lectura.y =spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
+
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_Y_H | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	lectura.y|=spi_read(SPI5) << 8;
+	gpio_set(GPIOC, GPIO1);
+
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_Z_L | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	lectura.z=spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
+
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_Z_H | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	lectura.z|=spi_read(SPI5) << 8;
+	gpio_set(GPIOC, GPIO1);
+
+	lectura.x = lectura.x*L3GD20_SENSITIVITY_500DPS;
+	lectura.y = lectura.y*L3GD20_SENSITIVITY_500DPS;
+	lectura.z = lectura.z*L3GD20_SENSITIVITY_500DPS;
+	return lectura;
+}
+
+
+int main(void){
+    clock_setup();
+    console_setup(115200);
+
+    
+}
