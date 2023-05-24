@@ -253,6 +253,11 @@ int main(void){
     msleep(2000);
 	gfx_init(lcd_draw_pixel, 240, 320);
 
+    gyro lectura;
+    char x_string[10];
+	char y_string[10];
+	char z_string[10];
+    float bateria_V;
 
     while (1){
         // Mostrando información en pantalla
@@ -271,37 +276,37 @@ int main(void){
 		gfx_setCursor(20, 60);
         gfx_setTextSize(3);
 		gfx_puts("Eje X");
-		gfx_puts(lectura.x);
+		gfx_puts(x_string);
 		
 		gfx_setCursor(20, 100);
         gfx_setTextSize(3);
 		gfx_puts("Eje Y");
-		gfx_puts(lectura.y);
+		gfx_puts(y_string);
 
 		gfx_setCursor(20, 140);
         gfx_setTextSize(3);
 		gfx_puts("Eje Z");
-		gfx_puts(lectura.z);
+		gfx_puts(z_string);
 
 
 		// Informacion de la bateria
 		gfx_setCursor(5, 200);
 		gfx_puts("Bateria: ");
 		gfx_setCursor(5, 240);
-		gfx_puts(bat);
+		gfx_puts(bateria_V);
 		gfx_puts(" V");
 
 		// Informacion de transmisión
 		gfx_setCursor(3, 270);
-		gfx_puts("Trasmitiendo: ");
+		gfx_puts("Trasmisión: ");
 
 		if (transmision_enable){
 			gfx_setCursor(205, 270);
-			gfx_puts("Si");
+			gfx_puts("Activada");
 		}
 		else{
 			gfx_setCursor(205, 270);
-			gfx_puts("No");
+			gfx_puts("Desactivada");
 		}
 		lcd_show_frame();
 		
@@ -311,20 +316,20 @@ int main(void){
 		gpio_set(GPIOC, GPIO1);
 
 		// Se lee el puerto PA3 y se calcula el nivel de la tensión de la batería
-		bateria_V = (read_adc_naiive(2)*9)/4095;
+		bateria_nivel = (read_adc_naiive(2)*9)/4095;
 		
 		// Se envia informacion solo si la transmision esta habilitada
 		if (transmision_enable)
 		{
 			gpio_toggle(GPIOG, GPIO13); // Blink en el LED de transmisión
 
-			console_puts(X_str);
+			console_puts(lectura.x);
 			console_puts("\t");
-			console_puts(Y_str);
+			console_puts(lectura.y);
 			console_puts("\t");
-			console_puts(Z_str);
+			console_puts(lectura.z);
 			console_puts("\t");
-			console_puts(bateria_V);
+			console_puts(bateria_nivel);
 			console_puts("\n");
 		}
 		else{
@@ -333,7 +338,7 @@ int main(void){
 
 		// Led de precaución por el nivel de la batería,
 		// mayor a 7V se paga, sino hace blinking
-		if (bateria_V<7)
+		if (bateria_nivel<7)
 		{
 			gpio_toggle(GPIOG, GPIO14); // Blink en el LED de batería
 		}
@@ -347,7 +352,7 @@ int main(void){
 		}
 
 		int i;
-		for (i = 0; i < 80000; i++)    /* Wait a bit. */
+		for (i = 0; i < 80000; i++)    /* Waiting. */
 			__asm__("nop");
 		
 	}
