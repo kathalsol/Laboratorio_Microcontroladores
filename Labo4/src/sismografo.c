@@ -23,7 +23,7 @@
 #include <libopencm3/stm32/spi.h>
 #include <libopencm3/stm32/adc.h>
 #include <libopencm3/stm32/usart.h>
-#include <libopencm3/stm32/nvic.h>
+#include <libopencm3/cm3/nvic.h>
 #include "clock.h"
 #include "console.h"
 #include "sdram.h"
@@ -60,6 +60,12 @@
 #define L3GD20_SENSITIVITY_2000DPS (0.070F)        
 #define L3GD20_DPS_TO_RADS         (0.017453293F) 
 
+typedef struct Gyro {
+  int16_t x;
+  int16_t y;
+  int16_t z;
+} gyro;
+
 // Declaración de funciones
 static void spi_setup(void);
 void input_setup(void);
@@ -70,11 +76,6 @@ gyro getting_xyz(void);
 // Variable global para la transmisión
 int transmision_enable = 0;
 
-typedef struct Gyro {
-  int16_t x;
-  int16_t y;
-  int16_t z;
-} gyro;
 
 static void spi_setup(void){
 
@@ -97,19 +98,19 @@ static void spi_setup(void){
 	gpio_set_af(GPIOF, GPIO_AF5, GPIO7 | GPIO8 | GPIO9);
 
 	//spi initialization
-	spi_set_master_mode(SPI15);
-	spi_set_baudrate_prescaler(SPI15, SPI_CR1_BR_FPCLK_DIV_64);
-	spi_set_clock_polarity_0(SPI15);
-	spi_set_clock_phase_0(SPI15);
-	spi_set_full_duplex_mode(SPI15);
-	spi_set_unidirectional_mode(SPI15); /* bidirectional but in 3-wire */
-	spi_enable_software_slave_management(SPI15);
-	spi_send_msb_first(SPI15);
-	spi_set_nss_high(SPI15);
+	spi_set_master_mode(SPI5);
+	spi_set_baudrate_prescaler(SPI5, SPI_CR1_BR_FPCLK_DIV_64);
+	spi_set_clock_polarity_0(SPI5);
+	spi_set_clock_phase_0(SPI5);
+	spi_set_full_duplex_mode(SPI5);
+	spi_set_unidirectional_mode(SPI5); /* bidirectional but in 3-wire */
+	spi_enable_software_slave_management(SPI5);
+	spi_send_msb_first(SPI5);
+	spi_set_nss_high(SPI5);
 
-	//spi_enable_ss_output(SPI15);
-	SPI_I2SCFGR(SPI15) &= ~SPI_I2SCFGR_I2SMOD;
-	spi_enable(SPI15);
+	//spi_enable_ss_output(SPI5);
+	SPI_I2SCFGR(SPI5) &= ~SPI_I2SCFGR_I2SMOD;
+	spi_enable(SPI5);
 
     gpio_clear(GPIOC, GPIO1);
 	spi_send(SPI5, GYR_CTRL_REG1); 
@@ -257,66 +258,58 @@ int main(void){
     char x_string[10];
 	char y_string[10];
 	char z_string[10];
-    float bateria_V;
+    char bateria_V[10];
 
     while (1){
         // Mostrando información en pantalla
-		gfx_fillScreen(LCD_WHITE);
-		gfx_setTextColor(LCD_BLACK, LCD_WHITE);
-		gfx_setTextSize(3);			
-		gfx_setCursor(23, 30);
+		gfx_fillScreen(LCD_BLACK);
+		gfx_setTextColor(LCD_WHITE, LCD_BLACK);
+		gfx_setTextSize(1.5);			
+		gfx_setCursor(20, 30);
 		gfx_puts(" Sismografo UCR ");		
 
 		// Informacion de los ejes
-
-        gfx_fillScreen(LCD_BLACK);
-        gfx_setCursor(20, 30);
-        gfx_puts("DATOS ");
-
-		gfx_setCursor(20, 60);
-        gfx_setTextSize(3);
+		gfx_setCursor(20, 80);
 		gfx_puts("Eje X");
-		gfx_puts(x_string);
+		//gfx_puts(x_string);
 		
-		gfx_setCursor(20, 100);
-        gfx_setTextSize(3);
+		gfx_setCursor(20, 120);
 		gfx_puts("Eje Y");
-		gfx_puts(y_string);
+		//gfx_puts(y_string);
 
-		gfx_setCursor(20, 140);
-        gfx_setTextSize(3);
+		gfx_setCursor(20, 160);
 		gfx_puts("Eje Z");
-		gfx_puts(z_string);
+		//gfx_puts(z_string);
 
 
 		// Informacion de la bateria
-		gfx_setCursor(5, 200);
-		gfx_puts("Bateria: ");
 		gfx_setCursor(5, 240);
-		gfx_puts(bateria_V);
+		gfx_puts("Bateria: ");
+		gfx_setCursor(5, 270);
+		//gfx_puts(bateria_V);
 		gfx_puts(" V");
 
 		// Informacion de transmisión
-		gfx_setCursor(3, 270);
-		gfx_puts("Trasmisión: ");
+		gfx_setCursor(3, 200);
+		gfx_puts("Trasmision: ");
 
 		if (transmision_enable){
-			gfx_setCursor(205, 270);
-			gfx_puts("Activada");
+			gfx_setCursor(205, 200);
+			gfx_puts("ON");
 		}
 		else{
-			gfx_setCursor(205, 270);
-			gfx_puts("Desactivada");
+			gfx_setCursor(205, 200);
+			gfx_puts("OFF");
 		}
 		lcd_show_frame();
 		
 		
 		//Enviar datos
-		lectura = read_xyz();
+		lectura = getting_xyz();
 		gpio_set(GPIOC, GPIO1);
 
 		// Se lee el puerto PA3 y se calcula el nivel de la tensión de la batería
-		bateria_nivel = (read_adc_naiive(2)*9)/4095;
+		int bateria_nivel = (read_adc_naiive(2)*9)/4095;
 		
 		// Se envia informacion solo si la transmision esta habilitada
 		if (transmision_enable)

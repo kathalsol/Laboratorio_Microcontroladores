@@ -32,3 +32,7 @@ def on_disconnect(client, userdata, rc):
 
 def on_publish(client, userdata, mid):
     print("En medio de llamada on_publish", mid)
+
+
+# Utilizando MQTT
+
