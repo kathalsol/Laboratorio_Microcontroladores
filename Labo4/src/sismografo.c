@@ -12,13 +12,23 @@
 // Muchos de estos fueron tomados de los ejemplos de libopencm3
 // que se utilizan de base para el desarrollo de este laboratorio
 
+#include <stdio.h>
 #include <stdint.h>
+#include <unistd.h>
+#include <math.h>
+#include <string.h>
+#include <errno.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/spi.h>
+#include <libopencm3/stm32/adc.h>
+#include <libopencm3/stm32/usart.h>
+#include <libopencm3/stm32/nvic.h>
 #include "clock.h"
 #include "console.h"
-
+#include "sdram.h"
+#include "lcd-spi.h"
+#include "gfx.h"
 
 // Para el giroscopio se utilizó como base tanto el ejemplo de
 // la libreria stm32/f3/stm32-discovery/spi y de stm32/f4/stm.../spi
@@ -55,6 +65,16 @@ static void spi_setup(void);
 void input_setup(void);
 static void adc_setup(void);
 static uint16_t read_adc_naiive(uint8_t channel);
+gyro getting_xyz(void);
+
+// Variable global para la transmisión
+int transmision_enable = 0;
+
+typedef struct Gyro {
+  int16_t x;
+  int16_t y;
+  int16_t z;
+} gyro;
 
 static void spi_setup(void){
 
@@ -147,7 +167,7 @@ static uint16_t read_adc_naiive(uint8_t channel){
 }
 
 // Funcion que lee las coordenadas xyz del giroscopio
-gyro read_xyz(void)
+gyro getting_xyz(void)
 {
 	gyro lectura;
 	gpio_clear(GPIOC, GPIO1);
@@ -224,5 +244,112 @@ int main(void){
     clock_setup();
     console_setup(115200);
 
-    
+    spi_setup();
+    input_setup();
+    adc_setup();
+    sdram_init();
+    lcd_spi_init();
+
+    msleep(2000);
+	gfx_init(lcd_draw_pixel, 240, 320);
+
+
+    while (1){
+        // Mostrando información en pantalla
+		gfx_fillScreen(LCD_WHITE);
+		gfx_setTextColor(LCD_BLACK, LCD_WHITE);
+		gfx_setTextSize(3);			
+		gfx_setCursor(23, 30);
+		gfx_puts(" Sismografo UCR ");		
+
+		// Informacion de los ejes
+
+        gfx_fillScreen(LCD_BLACK);
+        gfx_setCursor(20, 30);
+        gfx_puts("DATOS ");
+
+		gfx_setCursor(20, 60);
+        gfx_setTextSize(3);
+		gfx_puts("Eje X");
+		gfx_puts(lectura.x);
+		
+		gfx_setCursor(20, 100);
+        gfx_setTextSize(3);
+		gfx_puts("Eje Y");
+		gfx_puts(lectura.y);
+
+		gfx_setCursor(20, 140);
+        gfx_setTextSize(3);
+		gfx_puts("Eje Z");
+		gfx_puts(lectura.z);
+
+
+		// Informacion de la bateria
+		gfx_setCursor(5, 200);
+		gfx_puts("Bateria: ");
+		gfx_setCursor(5, 240);
+		gfx_puts(bat);
+		gfx_puts(" V");
+
+		// Informacion de transmisión
+		gfx_setCursor(3, 270);
+		gfx_puts("Trasmitiendo: ");
+
+		if (transmision_enable){
+			gfx_setCursor(205, 270);
+			gfx_puts("Si");
+		}
+		else{
+			gfx_setCursor(205, 270);
+			gfx_puts("No");
+		}
+		lcd_show_frame();
+		
+		
+		//Enviar datos
+		lectura = read_xyz();
+		gpio_set(GPIOC, GPIO1);
+
+		// Se lee el puerto PA3 y se calcula el nivel de la tensión de la batería
+		bateria_V = (read_adc_naiive(2)*9)/4095;
+		
+		// Se envia informacion solo si la transmision esta habilitada
+		if (transmision_enable)
+		{
+			gpio_toggle(GPIOG, GPIO13); // Blink en el LED de transmisión
+
+			console_puts(X_str);
+			console_puts("\t");
+			console_puts(Y_str);
+			console_puts("\t");
+			console_puts(Z_str);
+			console_puts("\t");
+			console_puts(bateria_V);
+			console_puts("\n");
+		}
+		else{
+			gpio_clear(GPIOG, GPIO13); // LED de transmisión se apaga
+		}
+
+		// Led de precaución por el nivel de la batería,
+		// mayor a 7V se paga, sino hace blinking
+		if (bateria_V<7)
+		{
+			gpio_toggle(GPIOG, GPIO14); // Blink en el LED de batería
+		}
+
+		else gpio_clear(GPIOG, GPIO14); //  LED de batería se apaga
+		
+		if (gpio_get(GPIOA, GPIO0)) {
+			transmision_enable = ~transmision_enable;
+			gpio_clear(GPIOG, GPIO13); //SE APAGA EL LED DE LA TRANSMISION
+				
+		}
+
+		int i;
+		for (i = 0; i < 80000; i++)    /* Wait a bit. */
+			__asm__("nop");
+		
+	}
+	return 0;
 }
