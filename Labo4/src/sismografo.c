@@ -255,19 +255,20 @@ int main(void){
 	char z_string[10];
     char bateria_V_str[10];
 
+	float bateria_V;
 	// Bandera para la transmisión
 	int transmision_enable = 0;
 
     while (1){
 
 		// Se lee el puerto PA2 y se calcula el nivel de la tensión de la batería
-		int bateria_V = (read_adc_naiive(2)*9)/4095;
+		bateria_V = (read_adc_naiive(2)*9.0)/4095;
 
 		// Se pasan las variables a strings utilizando las variable inicializadas
 		sprintf(x_string, "%d", get.X);
 		sprintf(y_string, "%d", get.Y);
 		sprintf(z_string, "%d", get.Z);
-		sprintf(bateria_V_str, "%d", bateria_V);
+		sprintf(bateria_V_str, "%.2f", bateria_V);
 
         // Mostrando información en pantalla
 		gfx_fillScreen(LCD_BLACK); // Fondo color negro
@@ -348,7 +349,7 @@ int main(void){
 
 		// Led de precaución por el nivel de la batería,
 		// mayor a 7V se paga, sino hace blinking
-		if (bateria_V_str<7)
+		if (bateria_V<=7.0)
 		{
 			gpio_toggle(GPIOG, GPIO14); // Blink en el LED de batería
 		}
