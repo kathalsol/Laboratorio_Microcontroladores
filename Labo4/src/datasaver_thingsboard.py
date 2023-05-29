@@ -6,10 +6,10 @@
     - Katharina Alfaro Solís B80251
     - Mauricio Rodríguez Obando B96694
 '''
+#!/usr/bin/python3
 
-import csv
 import time, json
-import time
+import serial
 import paho.mqtt.client as mqtt
 
 # En este archivo se leen los datos enviados por el 
@@ -33,6 +33,53 @@ def on_disconnect(client, userdata, rc):
 def on_publish(client, userdata, mid):
     print("En medio de llamada on_publish", mid)
 
+ser = serial.Serial("/dev/ttyACM0", 115200, timeout = 1)
+print("Conectado al puerto serial /dev/ttyACM0")
 
 # Utilizando MQTT
+client = mqtt.Client("labo4_client")
+client.connected = False
+client.on_connect = on_connect
+client.on_disconnect = on_disconnect
+client.on_publish = on_publish
 
+#Credenciales del servidor
+broker ="iot.eie.ucr.ac.cr"
+port = 1883
+topic = "v1/devices/me/telemetry"
+device = "" #Token de usuario
+client.username_pw_set(device)
+client.connect(broker, port)
+
+# Estructura json
+dict = dict()
+
+#Rutina de dormir
+while client.connected != True:
+    client.loop()
+    time.sleep(2)
+
+#Rutina de conexion
+while (1):
+    try: 
+        data = datos.readline().decode('utf-8').replace('\r', "").replace('\n', "")
+        data = data.split('\t')
+        dict["Eje X"] = data[0]
+        dict["Eje Y"] = data[1]
+        dict["Eje Z"] = data[2]
+        dict["Voltaje de Bateria"] = data[3]
+
+        if(float( data[3]) < 7):
+            dict["Bateria Baja"] = "Si"
+        else:
+            dict["Bateria Baja"] = "No"
+        
+        output = json.dumps(dict)
+
+        #Impresion en consola
+        print(output)
+        client.publish(topic, output)
+        time.sleep(1)
+        
+    except Exception as error:
+        print("Desabilitada la transmision de datos")

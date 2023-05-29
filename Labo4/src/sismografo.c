@@ -12,7 +12,6 @@
 // La mayoría de estos fueron tomados de los ejemplos de libopencm3
 // que se utilizan de base para el desarrollo de este laboratorio
 #include <stdio.h>
-#include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/spi.h>
 #include <libopencm3/stm32/adc.h>
@@ -61,6 +60,7 @@ typedef struct Giroscopio {
 
 // Declaración de funciones
 static void spi_setup(void);
+static void usart_setup(void);
 void input_setup(void);
 static void adc_setup(void);
 static uint16_t read_adc_naiive(uint8_t channel);
@@ -118,6 +118,21 @@ static void spi_setup(void){
 	gpio_set(GPIOC, GPIO1);
 }
 
+static void usart_setup(void)
+{
+	
+	/* Setup USART2 parameters. */
+	usart_set_baudrate(USART1, 115200);
+	usart_set_databits(USART1, 8);
+	usart_set_stopbits(USART1, USART_STOPBITS_1);
+	usart_set_mode(USART1, USART_MODE_TX);
+	usart_set_parity(USART1, USART_PARITY_NONE);
+	usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
+
+	/* Finally enable the USART. */
+	usart_enable(USART1);
+}
+
 void input_setup(void){
 
 	rcc_periph_clock_enable(RCC_ADC1);
@@ -167,7 +182,7 @@ static uint16_t read_adc_naiive(uint8_t channel){
 giroscopio getting_xyz(void){
 	giroscopio get;
 	gpio_clear(GPIOC, GPIO1);
-	spi_send(SPI5, GYR_WHO_AM_I | 0x80);
+	spi_send(SPI5, GYR_WHO_AM_I | GYR_RNW);
 	spi_read(SPI5);
 	spi_send(SPI5, 0);
 	spi_read(SPI5);
@@ -242,6 +257,7 @@ int main(void){
 
     clock_setup();
     input_setup();
+	usart_setup();
     spi_setup();
     adc_setup();
     sdram_init();
@@ -254,6 +270,9 @@ int main(void){
 	char y_string[10];
 	char z_string[10];
     char bateria_V_str[10];
+
+	//Variable para la transmision
+	char msg [35], comma[] = ",";
 
 	float bateria_V;
 	// Bandera para la transmisión
@@ -333,7 +352,7 @@ int main(void){
 		{
 			gpio_toggle(GPIOG, GPIO13); // Blink en el LED de transmisión
 
-			// Información que se envía a la consola
+			/* Información que se envía a la consola
 			console_puts(get.X);
 			console_puts("\t");
 			console_puts(get.Y);
@@ -341,8 +360,19 @@ int main(void){
 			console_puts(get.Z);
 			console_puts("\t");
 			console_puts(bateria_V_str);
+			console_puts("\n");*/
+			strcat(msg, x_string);
+			console_puts("\t");
+			strcat(msg, y_string);
+			console_puts("\t");
+			strcat(msg, z_string);
+			console_puts("\t");
+			strcat(msg, bateria_V_str);
+			console_puts(msg);
 			console_puts("\n");
+			memset(msg, 0, 35);
 		}
+
 		else{
 			gpio_clear(GPIOG, GPIO13); // LED de transmisión se apaga
 		}
