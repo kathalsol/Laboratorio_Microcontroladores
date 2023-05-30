@@ -17,7 +17,7 @@ import paho.mqtt.client as mqtt
 # que realiza la comunicación entre los datos y el dashboard
 
 def on_connect(client, userdata, flags, rc):
-    if rc == 0:
+    if (rc == 0):
         client.connected = True
         print("Conexión establecida exitosamente")
     else: 
@@ -47,8 +47,9 @@ client.on_publish = on_publish
 broker ="iot.eie.ucr.ac.cr"
 port = 1883
 topic = "v1/devices/me/telemetry"
-device = "" #Token de usuario
-client.username_pw_set(device)
+username = "labo4divicestm32"
+token = "0ee29zgjqa9wm3n8mt6n" #Token de usuario
+client.username_pw_set(token)
 client.connect(broker, port)
 
 # Estructura json
@@ -62,17 +63,19 @@ while client.connected != True:
 #Rutina de conexion
 while (1):
     try: 
-        data = datos.readline().decode('utf-8').replace('\r', "").replace('\n', "")
+        data = ser.readline().decode('utf-8')
+        data = data.replace('\r', "").replace('\n', "")
         data = data.split('\t')
-        dict["Eje X"] = data[0]
-        dict["Eje Y"] = data[1]
-        dict["Eje Z"] = data[2]
-        dict["Voltaje de Bateria"] = data[3]
+        if (len(data) == 4):
+            dict["Eje X"] = data[0]
+            dict["Eje Y"] = data[1]
+            dict["Eje Z"] = data[2]
+            dict["Voltaje de Bateria"] = data[3]
 
-        if(float( data[3]) < 7):
-            dict["Bateria Baja"] = "Si"
-        else:
-            dict["Bateria Baja"] = "No"
+            if(float( data[3]) < 7):
+                dict["Bateria Baja"] = "Si"
+            else:
+                dict["Bateria Baja"] = "No"
         
         output = json.dumps(dict)
 
