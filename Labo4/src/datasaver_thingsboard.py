@@ -62,7 +62,7 @@ while client.connected != True:
 
 #Rutina de conexion
 while (1):
-    try: 
+        # Error estas lineas
         data = ser.readline().decode('utf-8')
         data = data.replace('\r', "").replace('\n', "")
         data = data.split(',')
@@ -72,7 +72,7 @@ while (1):
             dict["Eje Z"] = data[2]
             dict["Voltaje de Bateria"] = data[3]
 
-            if(float( data[3]) < 7):
+            if(float(data[3]) < 7):
                 dict["Bateria Baja"] = "Si"
             else:
                 dict["Bateria Baja"] = "No"
@@ -83,6 +83,3 @@ while (1):
         print(output)
         client.publish(topic, output)
         time.sleep(1)
-        
-    except Exception as error:
-        print("Desabilitada la transmision de datos")

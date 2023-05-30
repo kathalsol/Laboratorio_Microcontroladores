@@ -121,10 +121,13 @@ static void spi_setup(void){
 
 static void usart_setup(void)
 {
-	/* Setup GPIO pin GPIO_USART2_TX/GPIO9 on GPIO port A for transmit. */
-	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);	
+	/* Setup GPIO pins for USART1 transmit. */
+	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);
+
+	/* Setup USART1 TX pin as alternate function. */	
 	gpio_set_af(GPIOA, GPIO_AF7, GPIO9);
 	/* Setup USART2 parameters. */
+	
 	usart_set_baudrate(USART1, 115200);
 	usart_set_databits(USART1, 8);
 	usart_set_stopbits(USART1, USART_STOPBITS_1);
@@ -163,6 +166,7 @@ static void adc_setup(void){
 
 	// Aqui se define el puerto donde se va a conectar la bateria (GPI02)
 	// Revisar este puerto al hacer la conexión
+	//Adc set resolution
     gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO2);
 	adc_power_off(ADC1);
 	adc_disable_scan_mode(ADC1);
@@ -172,7 +176,7 @@ static void adc_setup(void){
 
 static uint16_t read_adc_naiive(uint8_t channel){
 
-	uint8_t channel_array[16];
+	uint8_t channel_array[1];
 	channel_array[0] = channel;
 	adc_set_regular_sequence(ADC1, 1, channel_array);
 	adc_start_conversion_regular(ADC1);
@@ -284,7 +288,7 @@ int main(void){
     while (1){
 
 		// Se lee el puerto PA2 y se calcula el nivel de la tensión de la batería
-		bateria_V = (read_adc_naiive(2)*9.0)/4095;
+		bateria_V = (float)(read_adc_naiive(2)*9.0)/4095.0;
 
 		// Se pasan las variables a strings utilizando las variable inicializadas
 		sprintf(x_string, "%d", get.X);
