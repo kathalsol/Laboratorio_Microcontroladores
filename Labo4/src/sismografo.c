@@ -13,6 +13,7 @@
 // que se utilizan de base para el desarrollo de este laboratorio
 #include <stdio.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/spi.h>
 #include <libopencm3/stm32/adc.h>
 #include <libopencm3/stm32/usart.h>
@@ -120,7 +121,9 @@ static void spi_setup(void){
 
 static void usart_setup(void)
 {
-	
+	/* Setup GPIO pin GPIO_USART2_TX/GPIO9 on GPIO port A for transmit. */
+	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);	
+	gpio_set_af(GPIOA, GPIO_AF7, GPIO9);
 	/* Setup USART2 parameters. */
 	usart_set_baudrate(USART1, 115200);
 	usart_set_databits(USART1, 8);
@@ -352,29 +355,20 @@ int main(void){
 		{
 			gpio_toggle(GPIOG, GPIO13); // Blink en el LED de transmisión
 
-			/* Información que se envía a la consola
-			console_puts(get.X);
-			console_puts("\t");
-			console_puts(get.Y);
-			console_puts("\t");
-			console_puts(get.Z);
-			console_puts("\t");
-			console_puts(bateria_V_str);
-			console_puts("\n");*/
+			/* Información que se envía a la consola */
 			strcat(msg, x_string);
-			console_puts("\t");
+			strcat(msg, comma);
+		
 			strcat(msg, y_string);
-			console_puts("\t");
+			strcat(msg, comma);
+	
 			strcat(msg, z_string);
-			console_puts("\t");
+			strcat(msg, comma);
+			
 			strcat(msg, bateria_V_str);
 			console_puts(msg);
 			console_puts("\n");
 			memset(msg, 0, 35);
-		}
-
-		else{
-			gpio_clear(GPIOG, GPIO13); // LED de transmisión se apaga
 		}
 
 		// Led de precaución por el nivel de la batería,
@@ -388,11 +382,12 @@ int main(void){
 		// Botón de la transmisión
 		if (gpio_get(GPIOA, GPIO0)) {
 			if(transmision_enable){
-				transmision_enable = 0;
-				gpio_clear(GPIOG, GPIO13); //SE APAGA EL LED DE LA TRANSMISION
+				transmision_enable = 0;	
+				gpio_clear(GPIOG, GPIO13); //SE APAGA EL LED DE LA TRANSMISION	
 			}
-			else transmision_enable = ~transmision_enable;
-				
+			else {
+				transmision_enable = ~transmision_enable;
+			}
 		}
 
 		int i;

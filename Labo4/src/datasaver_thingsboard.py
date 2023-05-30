@@ -24,7 +24,7 @@ def on_connect(client, userdata, flags, rc):
         print("Conexión fallida. No se estableció conexión ", rc)
         client.loop_stop()
 
-def on_disconnect(client, userdata, rc):
+def on_disconnect(client, userdata, flags, rc):
     if(rc == 0):
         print("Desconexión exitosa")
     else:
@@ -65,7 +65,7 @@ while (1):
     try: 
         data = ser.readline().decode('utf-8')
         data = data.replace('\r', "").replace('\n', "")
-        data = data.split('\t')
+        data = data.split(',')
         if (len(data) == 4):
             dict["Eje X"] = data[0]
             dict["Eje Y"] = data[1]
