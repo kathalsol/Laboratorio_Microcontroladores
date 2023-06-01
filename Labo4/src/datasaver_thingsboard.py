@@ -21,7 +21,7 @@ def on_connect(client, userdata, flags, rc):
         client.connected = True
         print("Conexión establecida exitosamente")
     else: 
-        print("Conexión fallida. No se estableció conexión ", rc)
+        print("Conexión fallida. No se estableció conexión: ", rc)
         client.loop_stop()
 
 def on_disconnect(client, userdata, flags, rc):
@@ -35,7 +35,6 @@ def on_publish(client, userdata, mid):
 
 ser = serial.Serial("/dev/ttyACM0", 115200, timeout = 1)
 print("Conectado al puerto serial /dev/ttyACM0")
-
 # Utilizando MQTT
 client = mqtt.Client("labo4_client")
 client.connected = False
@@ -53,7 +52,7 @@ client.username_pw_set(token)
 client.connect(broker, port)
 
 # Estructura json
-dict = dict()
+dictionary = dict()
 
 #Rutina de dormir
 while client.connected != True:
@@ -67,17 +66,17 @@ while (1):
         data = data.replace('\r', "").replace('\n', "")
         data = data.split(',')
         if (len(data) == 4):
-            dict["Eje X"] = data[0]
-            dict["Eje Y"] = data[1]
-            dict["Eje Z"] = data[2]
-            dict["Voltaje de Bateria"] = data[3]
+            dictionary["Eje X"] = data[0]
+            dictionary["Eje Y"] = data[1]
+            dictionary["Eje Z"] = data[2]
+            dictionary["Voltaje de Bateria"] = data[3]
 
             if(float(data[3]) < 7):
-                dict["Bateria Baja"] = "Si"
+                dictionary["Bateria Baja"] = "Si"
             else:
-                dict["Bateria Baja"] = "No"
+                dictionary["Bateria Baja"] = "No"
         
-        output = json.dumps(dict)
+        output = json.dumps(dictionary)
 
         #Impresion en consola
         print(output)
