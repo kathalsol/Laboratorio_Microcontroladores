@@ -66,7 +66,7 @@ byte tensorArena[tensorArenaSize] __attribute__((aligned(16)));
 // array to map gesture index to a name
 const char* GESTURES[] = {
   "flex(down-up)",
-  "inwardFlex(up-down)"
+  "inwardFlex(up-down)",
   "move(leftToRight)"
 };
 
@@ -100,7 +100,7 @@ void setup() {
   }
 
   // Create an interpreter to run the model
-  tflInterpreter = new tflite::MicroInterpreter(tflModel, tflOpsResolver, tensorArena, tensorArenaSize, &tflErrorReporter);
+  tflInterpreter = new tflite::MicroInterpreter(tflModel, tflOpsResolver, tensorArena, tensorArenaSize);
 
   // Allocate memory for the model's input and output tensors
   tflInterpreter->AllocateTensors();
