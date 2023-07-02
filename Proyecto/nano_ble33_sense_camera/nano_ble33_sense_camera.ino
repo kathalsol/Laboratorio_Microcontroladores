@@ -152,6 +152,18 @@ void loop()
     bool stop_inferencing = false;
 
     while(stop_inferencing == false) {
+        ei_printf("\nDigite alguna letra para empezar a capturar la imagen...");
+
+        while(Serial.available() == 0){}
+
+        char userInput = Serial.read();
+
+        if(userInput == 'N'){
+            ei_printf("\nStopping");
+            stop_inferencing = true;
+            break;
+        }
+
         ei_printf("\nStarting inferencing in 2 seconds...\n");
 
         // instead of wait_ms, we'll wait on the signal, this allows threads to cancel us...
@@ -223,10 +235,20 @@ void loop()
             ei_printf("    No objects found\n");
         }
 #else
+        size_t winner = 0;
+        float winner_score = 0.0;
+        
         for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
-            ei_printf("    %s: %.5f\n", result.classification[ix].label,
-                                        result.classification[ix].value);
+            auto bb = result.classification[ix];
+            ei_printf("    %s: %.5f\n", bb.label,
+                                        bb.value);
+            if (bb.value > winner_score){
+              winner = ix;
+              winner_score = bb.value;
+            } 
         }
+
+        ei_printf("\nWinner: %s -> score: %.5f\n", result.classification[winner].label, winner_score);
 #if EI_CLASSIFIER_HAS_ANOMALY == 1
         ei_printf("    anomaly score: %.3f\n", result.anomaly);
 #endif
@@ -240,6 +262,7 @@ void loop()
         }
         if (snapshot_mem) ei_free(snapshot_mem);
     }
+    ei_printf("\nStop");
     ei_camera_deinit();
 }
 
