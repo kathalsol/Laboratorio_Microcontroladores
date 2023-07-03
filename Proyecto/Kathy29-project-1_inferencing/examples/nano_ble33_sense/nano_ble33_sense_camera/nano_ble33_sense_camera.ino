@@ -20,6 +20,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <Servo.h>
 
 /* Constant variables ------------------------------------------------------- */
 #define EI_CAMERA_RAW_FRAME_BUFFER_COLS     160
@@ -27,6 +28,8 @@
 
 #define DWORD_ALIGN_PTR(a)   ((a & 0x3) ?(((uintptr_t)a + 0x4) & ~(uintptr_t)0x3) : a)
 
+#define SERVO_PIN D11
+Servo myservo;
 /*
  ** NOTE: If you run into TFLite arena allocation issue.
  **
@@ -140,6 +143,10 @@ void setup()
     ei_printf("\tImage resolution: %dx%d\n", EI_CLASSIFIER_INPUT_WIDTH, EI_CLASSIFIER_INPUT_HEIGHT);
     ei_printf("\tFrame size: %d\n", EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE);
     ei_printf("\tNo. of classes: %d\n", sizeof(ei_classifier_inferencing_categories) / sizeof(ei_classifier_inferencing_categories[0]));
+
+    //Servo
+    myservo.attach(SERVO_PIN);
+    myservo.write(60);
 }
 
 /**
@@ -220,50 +227,75 @@ void loop()
         // print the predictions
         ei_printf("Predictions (DSP: %d ms., Classification: %d ms., Anomaly: %d ms.): \n",
                   result.timing.dsp, result.timing.classification, result.timing.anomaly);
-#if EI_CLASSIFIER_OBJECT_DETECTION == 1
-        bool bb_found = result.bounding_boxes[0].value > 0;
-        for (size_t ix = 0; ix < result.bounding_boxes_count; ix++) {
-            auto bb = result.bounding_boxes[ix];
-            if (bb.value == 0) {
-                continue;
-            }
+      #if EI_CLASSIFIER_OBJECT_DETECTION == 1
+              bool bb_found = result.bounding_boxes[0].value > 0;
+              for (size_t ix = 0; ix < result.bounding_boxes_count; ix++) {
+                  auto bb = result.bounding_boxes[ix];
+                  if (bb.value == 0) {
+                      continue;
+                  }
+      
+                  ei_printf("    %s (%f) [ x: %u, y: %u, width: %u, height: %u ]\n", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height);
+              }
+      
+              if (!bb_found) {
+                  ei_printf("    No objects found\n");
+              }
+      #else
+              size_t winner = 0;
+              float winner_score = 0.0;
+              
+              for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
+                  auto bb = result.classification[ix];
+                  ei_printf("    %s: %.5f\n", bb.label,
+                                              bb.value);
+                  if (bb.value > winner_score){
+                    winner = ix;
+                    winner_score = bb.value;
+                  } 
+              }
+      
+              ei_printf("\nWinner: %s -> score: %.5f\n", result.classification[winner].label, winner_score);
 
-            ei_printf("    %s (%f) [ x: %u, y: %u, width: %u, height: %u ]\n", bb.label, bb.value, bb.x, bb.y, bb.width, bb.height);
-        }
+              const char* winner_label = result.classification[winner].label;
 
-        if (!bb_found) {
-            ei_printf("    No objects found\n");
-        }
-#else
-        size_t winner = 0;
-        float winner_score = 0.0;
-        
-        for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
-            auto bb = result.classification[ix];
-            ei_printf("    %s: %.5f\n", bb.label,
-                                        bb.value);
-            if (bb.value > winner_score){
-              winner = ix;
-              winner_score = bb.value;
-            } 
-        }
-
-        ei_printf("\nWinner: %s -> score: %.5f\n", result.classification[winner].label, winner_score);
-#if EI_CLASSIFIER_HAS_ANOMALY == 1
-        ei_printf("    anomaly score: %.3f\n", result.anomaly);
-#endif
-#endif
-
-        while (ei_get_serial_available() > 0) {
-            if (ei_get_serial_byte() == 'b') {
-                ei_printf("Inferencing stopped by user\r\n");
-                stop_inferencing = true;
-            }
-        }
-        if (snapshot_mem) ei_free(snapshot_mem);
-    }
-    ei_printf("\nStop");
-    ei_camera_deinit();
+             
+              if (strcmp(winner_label, "Naranita") == 0) {
+                  ei_printf("\nNaranita!!!\n");
+                  myservo.write(0);   // Pone las Naranitas hacia un lado
+                  delay(2000);
+                  for (int pos = 0; pos <= 75; pos++) { // Devolviendo el servo
+                      myservo.write(pos);
+                      delay(1);
+                  }
+              }
+            
+                if (strcmp(winner_label, "Cereal") == 0) {
+                    ei_printf("\nCereal!!!\n");
+                    myservo.write(180);   // Pone el Cereal hacia el otro lado
+                    delay(2000);
+                    for (int pos = 180; pos >= -75; pos--) { // Devolviendo el servo
+                        myservo.write(pos);
+                        delay(1);
+                    }
+                }
+            
+                 delay(1000);
+              
+      #if EI_CLASSIFIER_HAS_ANOMALY == 1
+              ei_printf("    anomaly score: %.3f\n", result.anomaly);
+      #endif
+      
+              while (ei_get_serial_available() > 0) {
+                  if (ei_get_serial_byte() == 'b') {
+                      ei_printf("Inferencing stopped by user\r\n");
+                      stop_inferencing = true;
+                  }
+              }
+              if (snapshot_mem) ei_free(snapshot_mem);
+          }
+          ei_printf("\nStop");
+          ei_camera_deinit();
 }
 
 /**
